@@ -1,4 +1,4 @@
-import nirspec_fmp as nsp
+import osiris_fmp as nsp
 import numpy as np
 
 def chisquare(data,model,dof=0):

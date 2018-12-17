@@ -66,7 +66,7 @@ def run_mcmc(sci_data, tell_data, priors, limits=None, ndim=7, nwalkers=50, step
 
 	Examples
 	--------
-	>>> import nirspec_fmp as nsp
+	>>> import osiris_fmp as nsp
 	>>> order   = 33
 	>>> data    = nsp.Spectrum(name=sci_data_name, order=order, path=data_path)
 	>>> tell_sp = nsp.Spectrum(name=tell_data_name, order=data.order, path=tell_path)
@@ -519,7 +519,7 @@ def run_mcmc2(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 
 	Examples
 	--------
-	>>> import nirspec_fmp as nsp
+	>>> import osiris_fmp as nsp
 	>>> order   = 33
 	>>> data    = nsp.Spectrum(name=sci_data_name, order=order, path=data_path)
 	>>> tell_sp = nsp.Spectrum(name=tell_data_name, order=data.order, path=tell_path)
@@ -981,8 +981,7 @@ def run_mcmc3(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 
 	Examples
 	--------
-	>>> import nirspec_fmp as nsp
-	>>> order   = 33
+	>>> import osiris_fmp as nsp
 	>>> data    = nsp.Spectrum(name=sci_data_name, order=order, path=data_path)
 	>>> tell_sp = nsp.Spectrum(name=tell_data_name, order=data.order, path=tell_path)
 	>>> priors  =  { 'teff_min':2400,  'teff_max':2800,
@@ -1380,7 +1379,7 @@ def telluric_mcmc(tell_sp, nwalkers=30, step=400, burn=300, priors=None, moves=2
 
 	Examples
 	--------
-	>>> import nirspec_fmp as nsp
+	>>> import osiris_fmp as nsp
 	>>> tell_sp = nsp.Spectrum(name='jan19s0024_calibrated',order=33)
 	>>> nsp.telluric_mcmc(tell_sp)
 

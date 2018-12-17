@@ -95,7 +95,7 @@ def getTelluric(wavelow, wavehigh, **kwargs):
 	if method == 'pwv':
 		tfile = 'pwv_R300k_airmass{}/LBL_A{}_s0_w{}_R0300000_T.fits'.format(airmass, 
 			am_key[airmass],pwv_key[pwv])
-	tellurics = fits.open(BASE + '/nirspec_fmp/libraries/telluric/'\
+	tellurics = fits.open(BASE + '/osiris_fmp/libraries/telluric/'\
 	 + tfile)
 
 	telluric      = nsp.Model()
