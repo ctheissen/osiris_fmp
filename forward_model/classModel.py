@@ -15,12 +15,12 @@ import osiris_fmp as nsp
 #    """
 #    if path is None:
 #        path  = '/Users/dinohsu/projects/Models/models/btsettl08/' + \
-#        'NIRSPEC-O' + str(order) + '-RAW/'
+#        'OSIRIS-' + str(band) + '-RAW/'
 #    else:
-#        path  = path + '/NIRSPEC-O' + str(order) + '-RAW/'
+#        path  = path + '/OSIRIS-' + str(band) + '-RAW/'
 #    full_name = path + 'btsettl08_t'+ str(teff) + '_g' + \
 #    '{0:.2f}'.format(float(logg)) + '_z-' + '{0:.2f}'.format(float(feh)) + \
-#    '_en' + '{0:.2f}'.format(float(en)) + '_NIRSPEC-O' + str(order) + '-RAW.txt'
+#    '_en' + '{0:.2f}'.format(float(en)) + '_OSIRIS-' + str(band) + '-RAW.txt'
 #    
 #    return full_name
 
@@ -62,115 +62,50 @@ class Model():
 
     Examples
     --------
-    >>> import nirspec_pip as nsp
+    >>> import osiris_pip as nsp
     >>> model = nsp.Model(teff=2300, logg=5.5, order=33, path='/path/to/models')
     >>> model.plot()
     """
     def __init__(self, **kwargs):
         self.path  = kwargs.get('path')
-        self.order = kwargs.get('order')
 
-        if self.order != None:
-            self.teff = kwargs.get('teff', 3000.)
-            self.logg = kwargs.get('logg', 5.)
-            self.feh  = kwargs.get('feh', 0)
-            self.en   = kwargs.get('en', 0)
-            self.modelset   = kwargs.get('modelset', 'btsettl08')
-            self.instrument = kwargs.get('instrument', 'NIRSPEC')
-            self.band       = kwargs.get('band', 'O')
-            if self.teff == None:
-                self.teff = 2500
-            if self.logg == None:
-                self.logg = 5.00
-            if self.feh  == None:
-                self.feh  = 0.00
-            if self.en   == None:
-                self.en   = 0.00
-            #print('Return a BT-Settl model of the order {0}, with Teff {1} logg {2}, z {3}, Alpha enhancement {4}.'\
-            #    .format(self.order, self.teff, self.logg, self.feh, self.en))
-        
-            #full_name = _constructModelName(self.teff, self.logg, self.feh, self.en, self.order, self.path)
-            #model = ascii.read(full_name, format='no_header', fast_reader=False)
-            #self.wave  = model[0][:]*10000 #convert to Angstrom
-            #self.flux  = model[1][:]
-            
-            ## load the splat.interpolation BTSETTL model
-            #instrument = "NIRSPEC-O{}-RAW".format(self.order)
-            #sp = spmd.getModel(instrument=str(instrument),teff=self.teff,logg=self.logg,z=self.feh)
-            #self.wave = sp.wave.value*10000 #convert to Angstrom
-            #self.flux = sp.flux.value
 
-            #print('TEST1', self.order, self.instrument, self.band, self.modelset)
-
-            wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
-                                                                        order=self.order, instrument=self.instrument, band=self.band)
-            self.wave = wave * 10000 #convert to Angstrom
-            self.flux = flux
-
-        else:
-            self.wave   = kwargs.get('wave', [])
-            self.flux   = kwargs.get('flux', [])
-        
-
-    def plot(self, **kwargs):
-        """
-        Plot the model spectrum.
-        """
-        if self.order != None:
-            name = str(_constructModelName(self.teff, self.logg, 
-                self.feh, self.en, self.order, self.path))
-            output = kwargs.get('output', str(name) + '.pdf')
-            ylim = kwargs.get('yrange', [min(self.flux)-.2, max(self.flux)+.2])
-            title  = kwargs.get('title')
-            save   = kwargs.get('save', False)
-        
-            plt.figure(figsize=(16,6))
-            plt.plot(self.wave, self.flux, color='k', 
-                alpha=.8, linewidth=1, label=name)
-            plt.legend(loc='upper right', fontsize=12)
-            plt.ylim(ylim)    
+        self.teff = kwargs.get('teff', 3000.)
+        self.logg = kwargs.get('logg', 5.)
+        self.feh  = kwargs.get('feh', 0)
+        self.en   = kwargs.get('en', 0)
+        self.modelset   = kwargs.get('modelset', 'aces2013')
+        self.instrument = kwargs.get('instrument', 'OSIRIS')
+        self.band       = kwargs.get('band', 'Kbb')
+        if self.teff == None:
+            self.teff = 2500
+        if self.logg == None:
+            self.logg = 5.00
+        if self.feh  == None:
+            self.feh  = 0.00
+        if self.en   == None:
+            self.en   = 0.00
+        #print('Return a BT-Settl model of the order {0}, with Teff {1} logg {2}, z {3}, Alpha enhancement {4}.'\
+        #    .format(self.order, self.teff, self.logg, self.feh, self.en))
     
-            minor_locator = AutoMinorLocator(5)
-            #ax.xaxis.set_minor_locator(minor_locator)
-            # plt.grid(which='minor') 
-    
-            plt.xlabel(r'$\lambda$ [$\mathring{A}$]', fontsize=18)
-            plt.ylabel(r'$Flux$', fontsize=18)
-            #plt.ylabel(r'$F_{\lambda}$ [$erg/s \cdot cm^{2}$]', fontsize=18)
-            if title != None:
-                plt.title(title, fontsize=20)
-            plt.tight_layout()
-
-            if save == True:
-                plt.savefig(output)
-            plt.show()
-            plt.close()
-
-        else:
-            output = kwargs.get('output'+ '.pdf')
-            ylim   = kwargs.get('yrange', [min(self.flux)-.2, max(self.flux)+.2])
-            title  = kwargs.get('title')
-            save   = kwargs.get('save', False)
+        #full_name = _constructModelName(self.teff, self.logg, self.feh, self.en, self.order, self.path)
+        #model = ascii.read(full_name, format='no_header', fast_reader=False)
+        #self.wave  = model[0][:]*10000 #convert to Angstrom
+        #self.flux  = model[1][:]
         
-            plt.figure(figsize=(16,6))
-            plt.plot(self.wave, self.flux, color='k', alpha=.8, linewidth=1)
-            plt.legend(loc='upper right', fontsize=12)
-            plt.ylim(ylim)
-    
-            minor_locator = AutoMinorLocator(5)
-            #ax.xaxis.set_minor_locator(minor_locator)
-            # plt.grid(which='minor') 
-    
-            plt.xlabel(r'$\lambda$ [$\mathring{A}$]', fontsize=18)
-            plt.ylabel(r'$Flux$', fontsize=18)
-            #plt.ylabel(r'$F_{\lambda}$ [$erg/s \cdot cm^{2}$]', fontsize=18)
-            if title != None:
-                plt.title(title, fontsize=20)
-            plt.tight_layout()
+        ## load the splat.interpolation BTSETTL model
+        #instrument = "OSIRIS-{}-RAW".format(self.band)
+        #sp = spmd.getModel(instrument=str(instrument),teff=self.teff,logg=self.logg,z=self.feh)
+        #self.wave = sp.wave.value*10000 #convert to Angstrom
+        #self.flux = sp.flux.value
 
-            if save == True:
-                plt.savefig(output)
-            plt.show()
-            plt.close()
+        #print('TEST1', self.order, self.instrument, self.band, self.modelset)
+        
+        wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
+                                                                    instrument=self.instrument, band=self.band)
+        self.wave = np.array(wave).flatten() * 10000 #convert to Angstrom
+        self.flux = np.array(flux).flatten()
 
+
+        
 

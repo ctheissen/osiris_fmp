@@ -111,7 +111,7 @@ def broaden(wave, flux, vbroad, rotate=False, gaussian=True):
 
 	cvel = 299792.458
 
-	vres = cvel*np.median( abs((wave - np.roll(wave,1)) / wave))
+	vres = cvel*np.median( abs(wave - np.roll(wave,1) / wave))
 
 	if rotate: 
 		kern = lsf_rotate(vres, vbroad)

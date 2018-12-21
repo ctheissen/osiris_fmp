@@ -80,7 +80,7 @@ def getTelluric(wavelow, wavehigh, **kwargs):
 
 	Examples
 	--------
-	>>> import nirspec_pip as nsp
+	>>> import osiris_fmp as nsp
 	>>> telluric = nsp.getTelluric(wavelow=22900,wavehigh=23250)
 
 	"""
@@ -511,7 +511,7 @@ def wavelengthSolutionFit(data, model, order, **kwargs):
 		   			The telluric model to calculate the delta wavelength
 
 	order		: 	int
-				  	spectral order defined by NIRSPEC
+				  	spectral order defined by OSIRIS
 
 	Optional Parameters
 	-------------------
@@ -992,7 +992,7 @@ def wavelengthSolutionFit(data, model, order, **kwargs):
 		#	print("fitted p0: ",p0)
 		
 		# update the fits header keywords WFIT0-5, c3, c4
-		data2.header['COMMENT']  = 'Below are the keywords added by NIRSPEC_PIP...'
+		data2.header['COMMENT']  = 'Below are the keywords added by OSIRIS_FMP...'
 		data2.header['WFIT0NEW'] = wfit0
 		data2.header['WFIT1NEW'] = wfit1
 		data2.header['WFIT2NEW'] = wfit2
@@ -1140,7 +1140,7 @@ def wavelengthSolutionFit(data, model, order, **kwargs):
 			data_path = save_to_path + '_' + str(order) + '_all.fits'
 		save_name = save_to_path + "_calibrated_{}_all.fits".format(order)
 		with fits.open(data_path) as hdulist:
-			hdulist[0].header['COMMENT']  = 'Below are the keywords added by NIRSPEC_PIP...'
+			hdulist[0].header['COMMENT']  = 'Below are the keywords added by OSIRIS_FMP...'
 			hdulist[0].header['WFIT0NEW'] = wfit0
 			hdulist[0].header['WFIT1NEW'] = wfit1
 			hdulist[0].header['WFIT2NEW'] = wfit2

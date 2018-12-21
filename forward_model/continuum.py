@@ -165,7 +165,7 @@ def continuumTelluric(data, model=None, order=None):
 
     Examples
     --------
-    >>> import nirspec_pip as nsp
+    >>> import osiris_fmp as nsp
     >>> nsp.continuumTelluric(data)
 
     >>> nsp.continuumTelluric(data,model)

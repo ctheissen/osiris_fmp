@@ -56,7 +56,7 @@ def run_mcmc(sci_data, tell_data, priors, limits=None, ndim=7, nwalkers=50, step
 					ending pixel number for the spectra in the MCMC
 
 	alpha_tell	:	float
-					power of telluric spectra for estimating the line spread function of the NIRSPEC instrument
+					power of telluric spectra for estimating the line spread function of the OSIRIS instrument
 
 	modelset 	:	str
 					'btsettl08' or 'phoenixaces' model sets
@@ -375,7 +375,7 @@ def run_mcmc(sci_data, tell_data, priors, limits=None, ndim=7, nwalkers=50, step
 	model_notell = copy.deepcopy(model)
 	# apply telluric
 	model        = nsp.applyTelluric(model=model, alpha=alpha)
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model.flux   = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset
@@ -388,7 +388,7 @@ def run_mcmc(sci_data, tell_data, priors, limits=None, ndim=7, nwalkers=50, step
 	# contunuum correction
 	model, cont_factor = nsp.continuum(data=data, mdl=model, prop=True)
 
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model_notell.flux  = nsp.broaden(wave=model_notell.wave, flux=model_notell.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset
@@ -509,7 +509,7 @@ def run_mcmc2(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 					ending pixel number for the spectra in the MCMC
 
 	alpha_tell	:	float
-					power of telluric spectra for estimating the line spread function of the NIRSPEC instrument
+					power of telluric spectra for estimating the line spread function of the OSIRIS instrument
 
 	modelset 	:	str
 					'btsettl08' or 'phoenixaces' model sets
@@ -835,7 +835,7 @@ def run_mcmc2(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 	model_notell = copy.deepcopy(model)
 	# apply telluric
 	model        = nsp.applyTelluric(model=model, alpha=alpha)
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model.flux   = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset
@@ -848,7 +848,7 @@ def run_mcmc2(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 	# contunuum correction
 	model, cont_factor = nsp.continuum(data=data, mdl=model, prop=True)
 
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model_notell.flux  = nsp.broaden(wave=model_notell.wave, flux=model_notell.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset
@@ -971,7 +971,7 @@ def run_mcmc3(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 					ending pixel number for the spectra in the MCMC
 
 	alpha_tell	:	float
-					power of telluric spectra for estimating the line spread function of the NIRSPEC instrument
+					power of telluric spectra for estimating the line spread function of the OSIRIS instrument
 
 	modelset 	:	str
 					'btsettl08' or 'phoenixaces' model sets
@@ -1260,7 +1260,7 @@ def run_mcmc3(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 	model_notell = copy.deepcopy(model)
 	# apply telluric
 	model        = nsp.applyTelluric(model=model, alpha=alpha)
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model.flux   = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset
@@ -1273,7 +1273,7 @@ def run_mcmc3(sci_data, tell_data, priors, limits=None, ndim=8, nwalkers=50, ste
 	# contunuum correction
 	model, cont_factor = nsp.continuum(data=data, mdl=model, prop=True)
 
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model_notell.flux  = nsp.broaden(wave=model_notell.wave, flux=model_notell.flux, vbroad=lsf, rotate=False, gaussian=True)
 
 	# wavelength offset

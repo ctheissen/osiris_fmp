@@ -28,18 +28,17 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	"""
 
 	# read in the parameters
-	order      = kwargs.get('order', 33)
-	modelset   = kwargs.get('modelset', 'btsettl08')
+	modelset   = kwargs.get('modelset', 'aces2013')
 	lsf        = kwargs.get('lsf', 6.0)   # instrumental LSF
 	tell       = kwargs.get('tell', True) # apply telluric
 	data       = kwargs.get('data', None) # for continuum correction and resampling
-	instrument = kwargs.get('instrument', 'NIRSPEC') # for continuum correction and resampling
-	band       = kwargs.get('band', 'O') # for continuum correction and resampling
+	instrument = kwargs.get('instrument', 'OSIRIS') # for continuum correction and resampling
+	band       = kwargs.get('band', 'Kbb') # for continuum correction and resampling
 	
 	if data is not None:
 		order = data.order
 	# read in a model
-	model    = nsp.Model(teff=teff, logg=logg, feh=z, order=order, modelset=modelset, 
+	model    = nsp.Model(teff=teff, logg=logg, feh=z, modelset=modelset, 
 		                 instrument=instrument, band=band)
 	
 	# wavelength offset
@@ -55,7 +54,7 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	# apply telluric
 	if tell is True:
 		model = nsp.applyTelluric(model=model, alpha=alpha, airmass='1.5')
-	# NIRSPEC LSF
+	# OSIRIS LSF
 	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, 
 		                     vbroad=lsf, rotate=False, gaussian=True)
 
@@ -401,7 +400,7 @@ def getFringeFrequecy(tell_data, test=False):
 
 	return f[np.argmax(pgram)]
 
-def initModelFit(sci_data, lsf, modelset='btsettl08'):
+def initModelFit(sci_data, lsf, modelset='aces2013'):
 	"""
 	Conduct simple chisquare fit to obtain the initial parameters
 	for the forward modeling MCMC.
@@ -414,7 +413,7 @@ def initModelFit(sci_data, lsf, modelset='btsettl08'):
 							input science data
 
 	lsf 				:	float
-							line spread function for the NIRSPEC
+							line spread function for OSIRIS
 
 	Returns
 	-------

@@ -6,16 +6,13 @@ from astropy.table import Table
 
 ################################################################
 
-def InterpModel(Teff, Logg, modelset='btsettl08', instrument='NIRSPEC', 
-                band='O', order=33):
+def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'):
 
     FULL_PATH  = os.path.realpath(__file__)
     BASE, NAME = os.path.split(FULL_PATH)
 
     # Check the instrument and band
-    if instrument == 'NIRSPEC':
-        bandname  = '%s-%s%s-RAW'%(instrument, band, order)
-    elif instrument == 'OSIRIS':
+    if instrument == 'OSIRIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set
@@ -25,6 +22,7 @@ def InterpModel(Teff, Logg, modelset='btsettl08', instrument='NIRSPEC',
         path = BASE + '/../libraries/phoenixaces/%s/'%bandname
     elif modelset == 'aces2013' :
         path = BASE + '/../libraries/aces2013/%s/'%bandname
+        
 
     def bilinear_interpolation(x, y, points):
         '''Interpolate (x,y) from values associated with four points.
@@ -57,13 +55,13 @@ def InterpModel(Teff, Logg, modelset='btsettl08', instrument='NIRSPEC',
                ) / ((x2 - x1) * (y2 - y1) + 0.0))
 
 
-    def GetModel(temp, logg, modelset = 'btsettl08', wave=False):
+    def GetModel(temp, logg, modelset='aces2013', wave=False):
         feh, en = 0.00, 0.00
         if modelset == 'btsettl08':
             filename = 'btsettl08_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg)) + '_z-' + '{0:.2f}'.format(float(feh)) + '_en' + '{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
-        if modelset == 'phoenixaces':
+        elif modelset == 'phoenixaces':
             filename = 'phoenixaces_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
-        if modelset == 'aces2013':
+        elif modelset == 'aces2013':
             filename = 'aces2013_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
 
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
