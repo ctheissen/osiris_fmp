@@ -13,7 +13,7 @@ import os
 import sys
 
 
-def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
+def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset,**kwargs):
 	"""
 	Return a forward model.
 
@@ -38,16 +38,15 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	if data is not None:
 		order = data.order
 	# read in a model
-	model    = nsp.Model(teff=teff, logg=logg, feh=z, modelset=modelset, 
-		                 instrument=instrument, band=band)
+	model    = nsp.Model(teff=teff, logg=logg, feh=z, modelset=modelset, instrument=instrument, band=band)
+	#print('TEST1', model.flux)
 	
 	# wavelength offset
 	#model.wave += wave_offset
 
 	# apply vsini
-	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, 
-		                     vbroad=vsini, rotate=True, gaussian=False)
-	
+	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=vsini, rotate=True, gaussian=False)
+	#print('TEST2', model.flux)
 	# apply rv (including the barycentric correction)
 	model.wave = rvShift(model.wave, rv=rv)
 	
@@ -55,9 +54,8 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	if tell is True:
 		model = nsp.applyTelluric(model=model, alpha=alpha, airmass='1.5')
 	# OSIRIS LSF
-	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, 
-		                     vbroad=lsf, rotate=False, gaussian=True)
-
+	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
+	#print('TEST3', model.flux)
 	# add a fringe pattern to the model
 	#model.flux *= (1+amp*np.sin(freq*(model.wave-phase)))
 
@@ -66,8 +64,7 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	
 	# integral resampling
 	if data is not None:
-		model.flux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, 
-			                                       xl=data.wave))
+		model.flux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.wave))
 		model.wave = data.wave
 		# contunuum correction
 		model = nsp.continuum(data=data, mdl=model)
@@ -77,6 +74,7 @@ def makeModel(teff,logg,z,vsini,rv,alpha,wave_offset,flux_offset,**kwargs):
 	#model.flux **= (1 + flux_exponent_offset)
 
 	return model
+
 
 def rvShift(wavelength, rv):
 	"""
@@ -96,6 +94,7 @@ def rvShift(wavelength, rv):
 					shifted model wavelength (in Angstroms)
 	"""
 	return wavelength * ( 1 + rv / 299792.458)
+
 
 def applyTelluric(model, alpha=1, airmass='1.5'):
 	"""
@@ -117,8 +116,7 @@ def applyTelluric(model, alpha=1, airmass='1.5'):
 	# read in a telluric model
 	wavelow  = model.wave[0] - 10
 	wavehigh = model.wave[-1] + 10
-	telluric_model = nsp.getTelluric(wavelow=wavelow, wavehigh=wavehigh, 
-		                             alpha=alpha, airmass=airmass)
+	telluric_model = nsp.getTelluric(wavelow=wavelow, wavehigh=wavehigh, alpha=alpha, airmass=airmass)
 	# apply the telluric alpha parameter
 	#telluric_model.flux = telluric_model.flux**(alpha)
 
@@ -132,8 +130,7 @@ def applyTelluric(model, alpha=1, airmass='1.5'):
 
 	#elif len(model.wave) < len(telluric_model.wave):
 	## This should be always true
-	telluric_model.flux = np.array(nsp.integralResample(xh=telluric_model.wave, yh=telluric_model.flux, 
-		                                                xl=model.wave))
+	telluric_model.flux = np.array(nsp.integralResample(xh=telluric_model.wave, yh=telluric_model.flux, xl=model.wave))
 	telluric_model.wave = model.wave
 	model.flux *= telluric_model.flux
 
@@ -142,7 +139,8 @@ def applyTelluric(model, alpha=1, airmass='1.5'):
 		
 	return model
 
-def convolveTelluric(lsf,telluric_data,alpha=1):
+
+def convolveTelluric(lsf, telluric_data, alpha=1):
 	"""
 	Return a convolved telluric transmission model given a telluric data and lsf.
 	"""
@@ -152,13 +150,12 @@ def convolveTelluric(lsf,telluric_data,alpha=1):
 	telluric_model        = nsp.getTelluric(wavelow=wavelow,wavehigh=wavehigh)
 	telluric_model.flux **= alpha
 	# lsf
-	telluric_model.flux = nsp.broaden(wave=telluric_model.wave, flux=telluric_model.flux, 
-		                              vbroad=lsf, rotate=False, gaussian=True)
+	telluric_model.flux = nsp.broaden(wave=telluric_model.wave, flux=telluric_model.flux, vbroad=lsf, rotate=False, gaussian=True)
 	# resample
-	telluric_model.flux = np.array(nsp.integralResample(xh=telluric_model.wave, yh=telluric_model.flux, 
-		                                                xl=telluric_data.wave))
+	telluric_model.flux = np.array(nsp.integralResample(xh=telluric_model.wave, yh=telluric_model.flux, xl=telluric_data.wave))
 	telluric_model.wave = telluric_data.wave
 	return telluric_model
+
 
 def getLSF2(telluric_data, continuum=True, test=False, save_path=None):
 	"""
@@ -207,6 +204,7 @@ def getLSF2(telluric_data, continuum=True, test=False, save_path=None):
 	model.flux + popt[2]
 
 	return popt[0]
+
 
 def getLSF(telluric_data, alpha=1.0, continuum=True,test=False,save_path=None):
 	"""
@@ -283,7 +281,8 @@ def getLSF(telluric_data, alpha=1.0, continuum=True,test=False,save_path=None):
 
 	return lsf
 
-def getAlpha(telluric_data,lsf,continuum=True,test=False,save_path=None):
+
+def getAlpha(telluric_data, lsf, continuum=True, test=False, save_path=None):
 	"""
 	Return a best alpha value from a telluric data.
 	"""
@@ -357,6 +356,7 @@ def getAlpha(telluric_data,lsf,continuum=True,test=False,save_path=None):
 
 	return alpha
 
+
 def getFringeFrequecy(tell_data, test=False):
 	"""
 	Use the Lomb-Scargle Periodogram to identify 
@@ -399,6 +399,7 @@ def getFringeFrequecy(tell_data, test=False):
 		plt.close()
 
 	return f[np.argmax(pgram)]
+
 
 def initModelFit(sci_data, lsf, modelset='aces2013'):
 	"""
