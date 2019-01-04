@@ -40,19 +40,28 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
         '''
         # See formula at:  http://en.wikipedia.org/wiki/Bilinear_interpolation
 
-        points = sorted(points)               # order points by x, then by y
+        #print(points)
+        #points = sorted(points, key = lambda x: (x[0]))               # order points by x, then by y
         (x1, y1, q11), (_x1, y2, q12), (x2, _y1, q21), (_x2, _y2, q22) = points
-
+        #print(x,y)
+        #print(x1.data, y1.data, _x1.data, y2.data, x2.data, _y1.data, _x2.data, _y2.data)
+        #print(not x1 <= x <= x2, not y1 <= y <= y2)
         if x1 != _x1 or x2 != _x2 or y1 != _y1 or y2 != _y2:
             raise ValueError('points do not form a rectangle')
         if not x1 <= x <= x2 or not y1 <= y <= y2:
             raise ValueError('(x, y) not within the rectangle')
 
-        return 10**((q11 * (x2 - x) * (y2 - y) +
-                q21 * (x - x1) * (y2 - y) +
-                q12 * (x2 - x) * (y - y1) +
-                q22 * (x - x1) * (y - y1)
-               ) / ((x2 - x1) * (y2 - y1) + 0.0))
+        interpFlux = 10**((q11 * (x2 - x) * (y2 - y) +
+                           q21 * (x - x1) * (y2 - y) +
+                           q12 * (x2 - x) * (y - y1) +
+                           q22 * (x - x1) * (y - y1)
+                           ) / ((x2 - x1) * (y2 - y1) + 0.0))
+
+        #print(x,y,x2,y2, q11 * (x2 - x) * (y2 - y))
+        #print(x,y,x1,y2, q21 * (x - x1) * (y2 - y))
+        #print(x,y,x2,y1, q12 * (x2 - x) * (y - y1))
+        #print(x,y,x1,y1, q22 * (x - x1) * (y - y1))
+        return interpFlux
 
 
     def GetModel(temp, logg, modelset='aces2013', wave=False):
@@ -76,7 +85,7 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
 
     def findlogg(logg):
         LoggArr = np.arange(2.5, 6, 0.5)
-        dist = (LoggArr - logg)**2
+        dist    = (LoggArr - logg)**2
         return LoggArr[np.argsort(dist)][0:2]
 
     if modelset == 'btsettl08':
@@ -95,11 +104,15 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
 
     x1     = np.floor(Teff/100.)*100
     x2     = np.ceil(Teff/100.)*100
-    y1, y2 = findlogg(Logg)
+    #print('1', x1, x2)
+    y1, y2 = sorted(findlogg(Logg))
 
     # Get the nearest models to the gridpoint (Temp)
-    x1 = T1['Temp'][np.where(T1['Temp'] <= x1)][-1]
-    x2 = T1['Temp'][np.where(T1['Temp'] >= x2)][0]
+    #print(T1['Temp'][np.where(T1['Temp'] <= x1)])
+    #print(T1['Temp'][np.where(T1['Temp'] >= x2)])
+    x1 = sorted(T1['Temp'][np.where(T1['Temp'] <= x1)])[-1]
+    x2 = sorted(T1['Temp'][np.where(T1['Temp'] >= x2)])[0]
+    #print(Teff, Logg, x1, x2, y1, y2)
 
     # Check if the gridpoint exists within the model ranges
     for x in [x1, x2]:
@@ -107,14 +120,23 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
             if (x, y) not in zip(T1['Temp'], T1['Logg']):
                 print('No Model', x, y)
                 return 1
-    
+    '''
+    print(np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1)))
+    print(np.where( (T1['Temp'] == x1) & (T1['Logg'] == y2)))
+    print(np.where( (T1['Temp'] == x2) & (T1['Logg'] == y1)))
+    print(np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2)))
+    print(np.log10(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1))]), np.log10(T1['Logg'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1))]))
+    print(np.log10(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y2))]), np.log10(T1['Logg'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y2))]))
+    print(np.log10(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y1))]), np.log10(T1['Logg'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y1))]))
+    print(np.log10(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))]), np.log10(T1['Logg'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))]))
+    '''
     # Get the four points
     Points =  [ [np.log10(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1))]), T1['Logg'][np.where((T1['Temp'] == x1) & (T1['Logg'] == y1))], np.log10(GetModel(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1))], T1['Logg'][np.where((T1['Temp'] == x1) & (T1['Logg'] == y1))], modelset=modelset))],
                 [np.log10(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y2))]), T1['Logg'][np.where((T1['Temp'] == x1) & (T1['Logg'] == y2))], np.log10(GetModel(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y2))], T1['Logg'][np.where((T1['Temp'] == x1) & (T1['Logg'] == y2))], modelset=modelset))],
                 [np.log10(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y1))]), T1['Logg'][np.where((T1['Temp'] == x2) & (T1['Logg'] == y1))], np.log10(GetModel(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y1))], T1['Logg'][np.where((T1['Temp'] == x2) & (T1['Logg'] == y1))], modelset=modelset))],
                 [np.log10(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))]), T1['Logg'][np.where((T1['Temp'] == x2) & (T1['Logg'] == y2))], np.log10(GetModel(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))], T1['Logg'][np.where((T1['Temp'] == x2) & (T1['Logg'] == y2))], modelset=modelset))],
               ]
-
+    #print(Points)
     waves2 = GetModel(T1['Temp'][np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1))], T1['Logg'][np.where((T1['Temp'] == x1) & (T1['Logg'] == y1))], wave=True, modelset=modelset)
 
     return waves2, bilinear_interpolation(np.log10(Teff), Logg, Points)
