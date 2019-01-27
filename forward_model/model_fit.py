@@ -13,7 +13,7 @@ import os
 import sys
 
 
-def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset,**kwargs):
+def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_multiplier, **kwargs):
 	"""
 	Return a forward model.
 
@@ -66,8 +66,12 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset,**kwargs
 	if data is not None:
 		model.flux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.wave))
 		model.wave = data.wave
-		# contunuum correction
-		model = nsp.continuum(data=data, mdl=model)
+		
+		# contunuum correction (not for OSIRIS data)
+		#model = nsp.continuum(data=data, mdl=model)
+		
+		# flux multiplicate
+		model.flux *= flux_multiplier
 
 	# flux offset
 	model.flux += flux_offset
