@@ -97,7 +97,6 @@ def getTelluric(wavelow, wavehigh, **kwargs):
 			am_key[airmass],pwv_key[pwv])
 	tellurics = fits.open(BASE + '/osiris_fmp/libraries/telluric/'\
 	 + tfile)
-
 	telluric      = nsp.Model()
 	telluric.wave = np.array(tellurics[1].data['lam'] * 10000)
 	telluric.flux = np.array(tellurics[1].data['trans'])**(alpha)
