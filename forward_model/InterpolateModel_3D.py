@@ -15,6 +15,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
     # Check the instrument and band
     if instrument == 'OSIRIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'CHARIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set
     if modelset == 'aces-pso318':
@@ -210,6 +212,8 @@ def InterpModel_Log3D(LogTeff, Logg, LogPGS, modelset='aces-pso318', instrument=
 
     # Check the instrument and band
     if instrument == 'OSIRIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'CHARIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set

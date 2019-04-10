@@ -14,6 +14,8 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
     # Check the instrument and band
     if instrument == 'OSIRIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'CHARIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set
     if modelset == 'btsettl08':
@@ -141,6 +143,8 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
 
     # Check the instrument and band
     if instrument == 'OSIRIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'CHARIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set

@@ -15,6 +15,8 @@ def InterpModel_4D(Teff, Logg, PGS, GS, modelset='aces-pso318', instrument='OSIR
     # Check the instrument and band
     if instrument == 'OSIRIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'CHARIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set
     if modelset == 'aces-pso318':

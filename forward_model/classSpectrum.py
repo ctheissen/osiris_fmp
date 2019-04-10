@@ -50,13 +50,13 @@ class Spectrum():
 
 	"""
 	def __init__(self, **kwargs):
-		self.name  = kwargs.get('name')
-		self.order = kwargs.get('order', 33)
-		self.path  = kwargs.get('path')
+		self.name      = kwargs.get('name')
+		self.order     = kwargs.get('order', 33)
+		self.path      = kwargs.get('path')
 		self.applymask = kwargs.get('applymask',False)
 		#self.manaulmask = kwargs('manaulmask', False)
 
-		self.isosiris = kwargs.get('isosiris',False)
+		self.isosiris  = kwargs.get('isosiris',False)
 
 		if self.path == None:
 			self.path = './'
