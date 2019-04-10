@@ -68,44 +68,62 @@ class Model():
     """
     def __init__(self, **kwargs):
         self.path  = kwargs.get('path')
+        self.instrument = kwargs.get('instrument')
 
-
-        self.teff = kwargs.get('teff', 3000.)
-        self.logg = kwargs.get('logg', 5.)
-        self.feh  = kwargs.get('feh', 0)
-        self.en   = kwargs.get('en', 0)
-        self.modelset   = kwargs.get('modelset', 'aces2013')
-        self.instrument = kwargs.get('instrument', 'OSIRIS')
-        self.band       = kwargs.get('band', 'Kbb')
-        if self.teff == None:
-            self.teff = 2500
-        if self.logg == None:
-            self.logg = 5.00
-        if self.feh  == None:
-            self.feh  = 0.00
-        if self.en   == None:
-            self.en   = 0.00
-        #print('Return a BT-Settl model of the order {0}, with Teff {1} logg {2}, z {3}, Alpha enhancement {4}.'\
-        #    .format(self.order, self.teff, self.logg, self.feh, self.en))
-    
-        #full_name = _constructModelName(self.teff, self.logg, self.feh, self.en, self.order, self.path)
-        #model = ascii.read(full_name, format='no_header', fast_reader=False)
-        #self.wave  = model[0][:]*10000 #convert to Angstrom
-        #self.flux  = model[1][:]
+        if self.instrument != None:
+            self.teff = kwargs.get('teff', 3000.)
+            self.logg = kwargs.get('logg', 5.)
+            self.z    = kwargs.get('z', 0)
+            self.en   = kwargs.get('en', 0)
+            self.pgs  = kwargs.get('pgs', None)
+            self.modelset   = kwargs.get('modelset', 'aces-pso318')
+            self.instrument = kwargs.get('instrument', 'OSIRIS')
+            self.band       = kwargs.get('band', 'Kbb')
+            if self.teff == None:
+                self.teff = 2500
+            if self.logg == None:
+                self.logg = 5.00
+            if self.z    == None:
+                self.z    = 0.00
+            if self.en   == None:
+                self.en   = 0.00
+            #print('Return a BT-Settl model of the order {0}, with Teff {1} logg {2}, z {3}, Alpha enhancement {4}.'\
+            #    .format(self.order, self.teff, self.logg, self.feh, self.en))
         
-        ## load the splat.interpolation BTSETTL model
-        #instrument = "OSIRIS-{}-RAW".format(self.band)
-        #sp = spmd.getModel(instrument=str(instrument),teff=self.teff,logg=self.logg,z=self.feh)
-        #self.wave = sp.wave.value*10000 #convert to Angstrom
-        #self.flux = sp.flux.value
+            #full_name = _constructModelName(self.teff, self.logg, self.feh, self.en, self.order, self.path)
+            #model = ascii.read(full_name, format='no_header', fast_reader=False)
+            #self.wave  = model[0][:]*10000 #convert to Angstrom
+            #self.flux  = model[1][:]
+            
+            ## load the splat.interpolation BTSETTL model
+            #instrument = "OSIRIS-{}-RAW".format(self.band)
+            #sp = spmd.getModel(instrument=str(instrument),teff=self.teff,logg=self.logg,z=self.feh)
+            #self.wave = sp.wave.value*10000 #convert to Angstrom
+            #self.flux = sp.flux.value
 
-        #print('TEST1', self.order, self.instrument, self.band, self.modelset)
+            #print('TEST1', self.order, self.instrument, self.band, self.modelset)
+            
+            if self.pgs == None:
+                #wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
+                #                                                            instrument=self.instrument, band=self.band)
+                wave, flux = nsp.forward_model.InterpolateModel.InterpModel_Log(np.log10(self.teff), self.logg, modelset=self.modelset, 
+                                                                                instrument=self.instrument, band=self.band)
+            elif self.pgs != None:
+                #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
+                #                                                                  instrument=self.instrument, band=self.band)
+                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(np.log10(self.teff), self.logg, np.log10(self.pgs), modelset=self.modelset, 
+                                                                                     instrument=self.instrument, band=self.band)
+            #print('Wave', wave.data)
+            #print('Flux', flux.data)
+            self.wave = np.array(wave).flatten() * 10000 #convert to Angstrom
+            self.flux = np.array(flux).flatten()
+
+            #print('Wave1.5', self.wave)
+            #print('Flux1.5', self.flux)
         
-        wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
-                                                                    instrument=self.instrument, band=self.band)
-        self.wave = np.array(wave).flatten() * 10000 #convert to Angstrom
-        self.flux = np.array(flux).flatten()
-
+        else:
+            self.wave   = kwargs.get('wave', [])
+            self.flux   = kwargs.get('flux', [])
 
         
 

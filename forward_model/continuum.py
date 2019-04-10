@@ -171,9 +171,11 @@ def continuumTelluric(data, model=None, order=None):
     >>> nsp.continuumTelluric(data,model)
 
     """
+    
     if model is None:
         wavelow  = data.wave[0] - 20
         wavehigh = data.wave[-1] + 20
+
         model    = nsp.getTelluric(wavelow,wavehigh)
 
     if not data.applymask:

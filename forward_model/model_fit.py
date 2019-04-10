@@ -30,6 +30,7 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	# read in the parameters
 	modelset   = kwargs.get('modelset', 'aces2013')
 	lsf        = kwargs.get('lsf', 6.0)   # instrumental LSF
+	pgs        = kwargs.get('pgs', None)  # pgs
 	tell       = kwargs.get('tell', True) # apply telluric
 	data       = kwargs.get('data', None) # for continuum correction and resampling
 	instrument = kwargs.get('instrument', 'OSIRIS') # for continuum correction and resampling
@@ -38,24 +39,28 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	if data is not None:
 		order = data.order
 	# read in a model
-	model    = nsp.Model(teff=teff, logg=logg, feh=z, modelset=modelset, instrument=instrument, band=band)
+	model    = nsp.Model(teff=teff, logg=logg, feh=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
+	#model    = nsp.Model(teff=teff, logg=logg, feh=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
 	#print('TEST1', model.flux)
 	
 	# wavelength offset
 	#model.wave += wave_offset
 
 	# apply vsini
-	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=vsini, rotate=True, gaussian=False)
+	#model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=vsini, rotate=True, gaussian=False)
 	#print('TEST2', model.flux)
+	
 	# apply rv (including the barycentric correction)
 	model.wave = rvShift(model.wave, rv=rv)
 	
 	# apply telluric
 	if tell is True:
 		model = nsp.applyTelluric(model=model, alpha=alpha, airmass='1.5')
+	#print('TEST3', model.flux)
+
 	# OSIRIS LSF
 	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
-	#print('TEST3', model.flux)
+	#print('TEST4', model.flux)
 	# add a fringe pattern to the model
 	#model.flux *= (1+amp*np.sin(freq*(model.wave-phase)))
 
@@ -120,7 +125,9 @@ def applyTelluric(model, alpha=1, airmass='1.5'):
 	# read in a telluric model
 	wavelow  = model.wave[0] - 10
 	wavehigh = model.wave[-1] + 10
+
 	telluric_model = nsp.getTelluric(wavelow=wavelow, wavehigh=wavehigh, alpha=alpha, airmass=airmass)
+
 	# apply the telluric alpha parameter
 	#telluric_model.flux = telluric_model.flux**(alpha)
 
@@ -135,7 +142,9 @@ def applyTelluric(model, alpha=1, airmass='1.5'):
 	#elif len(model.wave) < len(telluric_model.wave):
 	## This should be always true
 	telluric_model.flux = np.array(nsp.integralResample(xh=telluric_model.wave, yh=telluric_model.flux, xl=model.wave))
+
 	telluric_model.wave = model.wave
+
 	model.flux *= telluric_model.flux
 
 	#elif len(model.wave) == len(telluric_model.wave):
