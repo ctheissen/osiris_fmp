@@ -3,6 +3,7 @@ import scipy.signal as signal
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from scipy.signal import medfilt
 from astropy.io import fits
 import osiris_fmp as nsp
 import emcee
@@ -35,6 +36,7 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	data       = kwargs.get('data', None) # for continuum correction and resampling
 	instrument = kwargs.get('instrument', 'OSIRIS') # for continuum correction and resampling
 	band       = kwargs.get('band', 'Kbb') # for continuum correction and resampling
+	smooth     = kwargs.get('smooth', False) # for continuum correction and resampling
 	
 	if data is not None:
 		order = data.order
@@ -74,6 +76,9 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 		
 		# contunuum correction (not for OSIRIS data)
 		#model = nsp.continuum(data=data, mdl=model)
+		if smooth:
+			smoothfluxmed = medfilt(model.flux, kernel_size=151)
+			model.flux -= smoothfluxmed
 		
 		# flux multiplicate
 		model.flux *= flux_multiplier
