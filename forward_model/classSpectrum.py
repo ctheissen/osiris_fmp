@@ -86,7 +86,7 @@ class Spectrum():
 		else: 
 
 			#fullpath = self.path + '/' + self.name + '_' + str(self.order) + '.txt'
-			T = Table.read(self.path+'/%s.txt'%self.name, format='ascii', delimiter=' ')
+			T = Table.read(self.path+'/%s.txt'%self.name, format='ascii', delimiter=' ', comment='#')
 
 			#The indices 0 to 3 correspond to wavelength, flux, noise, and sky
 			self.wave  = T['Wavelength(um)'] * 10000
