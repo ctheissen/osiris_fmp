@@ -32,11 +32,13 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	modelset   = kwargs.get('modelset', 'aces2013')
 	lsf        = kwargs.get('lsf', 6.0)   # instrumental LSF
 	pgs        = kwargs.get('pgs', None)  # pgs
+	vsini_set  = kwargs.get('vsini_set', True) # apply telluric
 	tell       = kwargs.get('tell', True) # apply telluric
 	data       = kwargs.get('data', None) # for continuum correction and resampling
 	instrument = kwargs.get('instrument', 'OSIRIS') # for continuum correction and resampling
 	band       = kwargs.get('band', 'Kbb') # for continuum correction and resampling
 	smooth     = kwargs.get('smooth', False) # for continuum correction and resampling
+	JHK        = kwargs.get('JHK', False) # for continuum correction and resampling
 	
 	if data is not None:
 		order = data.order
@@ -49,7 +51,8 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	#model.wave += wave_offset
 
 	# apply vsini
-	#model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=vsini, rotate=True, gaussian=False)
+	if vsini_set is True:
+		model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=vsini, rotate=True, gaussian=False)
 	#print('TEST2', model.flux)
 	
 	# apply rv (including the barycentric correction)
@@ -71,8 +74,31 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	
 	# integral resampling
 	if data is not None:
+
+		if JHK == 'J':
+			model.Jflux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.Jwave))
+			model.Jwave = data.Jwave
+			model.Jflux *= flux_multiplier
+			model.Jflux += flux_offset
+			return model
+
+		if JHK == 'H':
+			model.Hflux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.Hwave))
+			model.Hwave = data.Hwave
+			model.Hflux *= flux_multiplier
+			model.Hflux += flux_offset
+			return model
+
+		if JHK == 'K':
+			model.Kflux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.Kwave))
+			model.Kwave = data.Kwave
+			model.Kflux *= flux_multiplier
+			model.Kflux += flux_offset
+			return model
+
 		model.flux = np.array(nsp.integralResample(xh=model.wave, yh=model.flux, xl=data.wave))
 		model.wave = data.wave
+
 		
 		# contunuum correction (not for OSIRIS data)
 		#model = nsp.continuum(data=data, mdl=model)
