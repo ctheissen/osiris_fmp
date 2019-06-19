@@ -14,6 +14,7 @@ forward_model/__pycache__/mcmc.cpython-37.pyc
 forward_model/__pycache__/model_fit.cpython-37.pyc
 forward_model/__pycache__/rotation_broaden.cpython-37.pyc
 libraries/.DS_Store
+libraries/aces-pso318/.DS_Store
 utils/__pycache__/addKeyword.cpython-37.pyc
 utils/__pycache__/listTarget.cpython-37.pyc
 utils/__pycache__/stats.cpython-37.pyc
