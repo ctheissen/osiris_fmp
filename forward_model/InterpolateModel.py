@@ -24,6 +24,8 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
         path = BASE + '/../libraries/phoenixaces/%s/'%bandname
     elif modelset == 'aces2013' :
         path = BASE + '/../libraries/aces2013/%s/'%bandname
+    elif modelset == 'agss09-dusty' :
+        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/%s/'%bandname
         
 
     def bilinear_interpolation(x, y, points):
@@ -67,13 +69,15 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
 
 
     def GetModel(temp, logg, modelset='aces2013', wave=False):
-        feh, en = 0.00, 0.00
+        feh, en, kzz = 0.00, 0.00, 0.0
         if modelset == 'btsettl08':
             filename = 'btsettl08_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg)) + '_z-' + '{0:.2f}'.format(float(feh)) + '_en' + '{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
         elif modelset == 'phoenixaces':
             filename = 'phoenixaces_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
         elif modelset == 'aces2013':
             filename = 'aces2013_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
+        elif modelset == 'agss09-dusty':
+            filename = 'AGSS09-Dusty_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(logg) + '_z{0:.2f}'.format(feh) + '_Kzz{0:.1f}'.format(kzz) + '_%s.txt'%bandname
 
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
 
@@ -88,6 +92,9 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
         Gridfile = BASE + '/../libraries/phoenixaces/phoenixaces_gridparams.csv'
     elif modelset == 'aces2013':
         Gridfile = BASE + '/../libraries/aces2013/aces2013_gridparams.csv'
+    elif modelset == 'agss09-dusty':
+        Gridfile = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/AGSS09-Dusty_gridparams.csv'
+
     T1 = Table.read(Gridfile)
 
     # Check if the model already exists (grid point)
@@ -154,6 +161,8 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
         path = BASE + '/../libraries/phoenixaces/%s/'%bandname
     elif modelset == 'aces2013' :
         path = BASE + '/../libraries/aces2013/%s/'%bandname
+    elif modelset == 'agss09-dusty' :
+        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/%s/'%bandname
         
 
     def bilinear_interpolation(x, y, points):
@@ -197,13 +206,16 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
 
 
     def GetModel(temp, logg, modelset='aces2013', wave=False):
-        feh, en = 0.00, 0.00
+        feh, en, kzz = 0.00, 0.00, 0.0
+        print(int(temp.data[0]), logg)
         if modelset == 'btsettl08':
             filename = 'btsettl08_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg)) + '_z-' + '{0:.2f}'.format(float(feh)) + '_en' + '{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
         elif modelset == 'phoenixaces':
             filename = 'phoenixaces_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
         elif modelset == 'aces2013':
             filename = 'aces2013_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z-{0:.2f}'.format(float(feh)) + '_en{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
+        elif modelset == 'agss09-dusty':
+            filename = 'AGSS09-Dusty_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z{0:.2f}'.format(float(feh)) + '_Kzz{0:.1f}'.format(float(kzz)) + '_%s.txt'%bandname
 
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
 
@@ -218,6 +230,9 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
         Gridfile = BASE + '/../libraries/phoenixaces/phoenixaces_gridparams.csv'
     elif modelset == 'aces2013':
         Gridfile = BASE + '/../libraries/aces2013/aces2013_gridparams.csv'
+    elif modelset == 'agss09-dusty':
+        Gridfile = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/AGSS09-Dusty_gridparams.csv'
+    
     T1 = Table.read(Gridfile)
 
     # Check if the model already exists (grid point)

@@ -39,11 +39,13 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	band       = kwargs.get('band', 'Kbb') # for continuum correction and resampling
 	smooth     = kwargs.get('smooth', False) # for continuum correction and resampling
 	JHK        = kwargs.get('JHK', False) # for continuum correction and resampling
+
+	#print('Params Model:', teff, logg, z)
 	
 	if data is not None:
 		order = data.order
 	# read in a model
-	model    = nsp.Model(teff=teff, logg=logg, feh=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
+	model    = nsp.Model(teff=teff, logg=logg, z=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
 	#model    = nsp.Model(teff=teff, logg=logg, feh=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
 	#print('TEST1', model.flux)
 	

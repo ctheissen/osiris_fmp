@@ -103,15 +103,21 @@ class Model():
 
             #print('TEST1', self.order, self.instrument, self.band, self.modelset)
             
-            if self.pgs == None:
+            if self.pgs == None and self.modelset != 'agss09-dusty':
                 #wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
                 wave, flux = nsp.forward_model.InterpolateModel.InterpModel_Log(np.log10(self.teff), self.logg, modelset=self.modelset, 
                                                                                 instrument=self.instrument, band=self.band)
-            elif self.pgs != None:
+            elif self.pgs != None and self.modelset != 'agss09-dusty':
                 #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
                 wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(np.log10(self.teff), self.logg, np.log10(self.pgs), modelset=self.modelset, 
+                                                                                     instrument=self.instrument, band=self.band)
+            elif self.modelset == 'agss09-dusty':
+                #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
+                #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
+                #                                                                  instrument=self.instrument, band=self.band)
+                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(np.log10(self.teff), self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
             #print('Wave', wave.data)
             #print('Flux', flux.data)
