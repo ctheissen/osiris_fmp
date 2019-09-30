@@ -215,7 +215,7 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
 
 	def GetModel(temp, logg, modelset='aces2013', wave=False):
 		feh, en, kzz = 0.00, 0.00, 0.0
-		print(int(temp.data[0]), logg)
+		#print(int(temp.data[0]), logg)
 		if modelset == 'btsettl08':
 			filename = 'btsettl08_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg)) + '_z-' + '{0:.2f}'.format(float(feh)) + '_en' + '{0:.2f}'.format(float(en)) + '_%s.txt'%bandname
 		elif modelset == 'phoenixaces':
