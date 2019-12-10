@@ -175,7 +175,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
     ind110 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z0) ) # 110
     ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 001
     ind101 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 101
-    ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 011
+    ind011 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 011
     ind111 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 111
     Points =  [ [np.log10(T1['Temp'][ind000]), T1['Logg'][ind000], np.log10(T1['pgs'][ind000]), 
                  np.log10(GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['pgs'][ind000], modelset=modelset))],
@@ -189,8 +189,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
                  np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['pgs'][ind001], modelset=modelset))],
                 [np.log10(T1['Temp'][ind101]), T1['Logg'][ind101], np.log10(T1['pgs'][ind101]), 
                  np.log10(GetModel(T1['Temp'][ind101], T1['Logg'][ind101], T1['pgs'][ind101], modelset=modelset))],
-                [np.log10(T1['Temp'][ind001]), T1['Logg'][ind001], np.log10(T1['pgs'][ind001]), 
-                 np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['pgs'][ind001], modelset=modelset))],
+                [np.log10(T1['Temp'][ind011]), T1['Logg'][ind011], np.log10(T1['pgs'][ind011]), 
+                 np.log10(GetModel(T1['Temp'][ind011], T1['Logg'][ind011], T1['pgs'][ind011], modelset=modelset))],
                 [np.log10(T1['Temp'][ind111]), T1['Logg'][ind111], np.log10(T1['pgs'][ind111]), 
                  np.log10(GetModel(T1['Temp'][ind111], T1['Logg'][ind111], T1['pgs'][ind111], modelset=modelset))],
               ]
@@ -390,7 +390,7 @@ def InterpModel_Log3D(LogTeff, Logg, LogPGS, modelset='aces-pso318', instrument=
         ind110 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z0) ) # 110
         ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 001
         ind101 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 101
-        ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 011
+        ind011 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 011
         ind111 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 111
         Points =  [ [np.log10(T1['Temp'][ind000]), T1['Logg'][ind000], np.log10(T1['pgs'][ind000]), 
                      np.log10(GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['pgs'][ind000], modelset=modelset))],
@@ -404,8 +404,8 @@ def InterpModel_Log3D(LogTeff, Logg, LogPGS, modelset='aces-pso318', instrument=
                      np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['pgs'][ind001], modelset=modelset))],
                     [np.log10(T1['Temp'][ind101]), T1['Logg'][ind101], np.log10(T1['pgs'][ind101]), 
                      np.log10(GetModel(T1['Temp'][ind101], T1['Logg'][ind101], T1['pgs'][ind101], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind001]), T1['Logg'][ind001], np.log10(T1['pgs'][ind001]), 
-                     np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['pgs'][ind001], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind011]), T1['Logg'][ind011], np.log10(T1['pgs'][ind011]), 
+                     np.log10(GetModel(T1['Temp'][ind011], T1['Logg'][ind011], T1['pgs'][ind011], modelset=modelset))],
                     [np.log10(T1['Temp'][ind111]), T1['Logg'][ind111], np.log10(T1['pgs'][ind111]), 
                      np.log10(GetModel(T1['Temp'][ind111], T1['Logg'][ind111], T1['pgs'][ind111], modelset=modelset))],
                   ]
@@ -484,7 +484,7 @@ def InterpModel_Log3D(LogTeff, Logg, LogPGS, modelset='aces-pso318', instrument=
         ind110 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['Metal'] == z0) ) # 110
         ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['Metal'] == z1) ) # 001
         ind101 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['Metal'] == z1) ) # 101
-        ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['Metal'] == z1) ) # 011
+        ind011 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['Metal'] == z1) ) # 011
         ind111 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['Metal'] == z1) ) # 111
         Points =  [ [np.log10(T1['Temp'][ind000]), T1['Logg'][ind000], T1['Metal'][ind000], 
                      np.log10(GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['Metal'][ind000], modelset=modelset))],
@@ -498,8 +498,8 @@ def InterpModel_Log3D(LogTeff, Logg, LogPGS, modelset='aces-pso318', instrument=
                      np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['Metal'][ind001], modelset=modelset))],
                     [np.log10(T1['Temp'][ind101]), T1['Logg'][ind101], T1['Metal'][ind101], 
                      np.log10(GetModel(T1['Temp'][ind101], T1['Logg'][ind101], T1['Metal'][ind101], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind001]), T1['Logg'][ind001], T1['Metal'][ind001], 
-                     np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['Metal'][ind001], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind011]), T1['Logg'][ind011], T1['Metal'][ind011], 
+                     np.log10(GetModel(T1['Temp'][ind011], T1['Logg'][ind011], T1['Metal'][ind011], modelset=modelset))],
                     [np.log10(T1['Temp'][ind111]), T1['Logg'][ind111], T1['Metal'][ind111], 
                      np.log10(GetModel(T1['Temp'][ind111], T1['Logg'][ind111], T1['Metal'][ind111], modelset=modelset))],
                   ]
