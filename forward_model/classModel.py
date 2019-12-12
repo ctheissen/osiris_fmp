@@ -74,7 +74,6 @@ class Model():
             self.teff = kwargs.get('teff', 3000.)
             self.logg = kwargs.get('logg', 5.)
             self.z    = kwargs.get('z', 0)
-            print('test0',self.z)
             self.en   = kwargs.get('en', 0)
             self.pgs  = kwargs.get('pgs', None)
             self.modelset   = kwargs.get('modelset', 'aces-pso318')
