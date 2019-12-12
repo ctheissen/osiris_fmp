@@ -74,6 +74,7 @@ class Model():
             self.teff = kwargs.get('teff', 3000.)
             self.logg = kwargs.get('logg', 5.)
             self.z    = kwargs.get('z', 0)
+            print('test0',self.z)
             self.en   = kwargs.get('en', 0)
             self.pgs  = kwargs.get('pgs', None)
             self.modelset   = kwargs.get('modelset', 'aces-pso318')
@@ -106,18 +107,18 @@ class Model():
             if self.pgs == None and self.modelset != 'agss09-dusty':
                 #wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel.InterpModel_Log(np.log10(self.teff), self.logg, modelset=self.modelset, 
+                wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                                                                                 instrument=self.instrument, band=self.band)
             elif self.pgs != None and self.modelset != 'agss09-dusty':
                 #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(np.log10(self.teff), self.logg, np.log10(self.pgs), modelset=self.modelset, 
+                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(self.teff, self.logg, np.log10(self.pgs), modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
             elif self.modelset == 'agss09-dusty':
                 #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
                 #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(np.log10(self.teff), self.logg, self.z, modelset=self.modelset, 
+                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
             #print('Wave', wave.data)
             #print('Flux', flux.data)

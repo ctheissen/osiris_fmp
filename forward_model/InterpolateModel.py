@@ -105,15 +105,15 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
 
 	# Check if the model already exists (grid point)
 	if (Teff, Logg) in zip(T1['Temp'], T1['Logg']): 
-		flux2  = GetModel(T1['Temp'][np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == Teff) & (T1['Logg'] == Logg))])
-		waves2 = GetModel(T1['Temp'][np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == Teff) & (T1['Logg'] == Logg))], wave=True)
+		flux2  = GetModel(T1['Temp'][np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == Teff) & (T1['Logg'] == Logg))], modelset=modelset)
+		waves2 = GetModel(T1['Temp'][np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == Teff) & (T1['Logg'] == Logg))], modelset=modelset, wave=True)
 		return waves2, flux2
 
 	#print(Teff, Logg, x1, x2, y1, y2)
-	x0 = T1['Temp'][np.where(T1['Temp'] <= Teff)][-1]
-	x1 = T1['Temp'][np.where(T1['Temp'] >= Teff)][0]
-	y0 = list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )]))[-1]
-	y1 = list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )]))[0]
+	x0 = np.max(T1['Temp'][np.where(T1['Temp'] <= Teff)])
+	x1 = np.min(T1['Temp'][np.where(T1['Temp'] >= Teff)])
+	y0 = np.max(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )])))
+	y1 = np.min(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
 	
 
 	# Check if the gridpoint exists within the model ranges
@@ -148,7 +148,7 @@ def InterpModel(Teff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'
 #########################################################################################################
 
 
-
+# This is currently defunct. No need to do this in log space!
 def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', band='Kbb'):
 
 	FULL_PATH  = os.path.realpath(__file__)
@@ -249,16 +249,16 @@ def InterpModel_Log(LogTeff, Logg, modelset='aces2013', instrument='OSIRIS', ban
 
 	# Check if the model already exists (grid point)
 	if (LogTeff, Logg) in zip(T1['Temp'], T1['Logg']): 
-		flux2  = GetModel(T1['Temp'][np.where( (T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))])
-		waves2 = GetModel(T1['Temp'][np.where( (T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], wave=True)
+		flux2  = GetModel(T1['Temp'][np.where( (T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], modelset=modelset)
+		waves2 = GetModel(T1['Temp'][np.where( (T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], T1['Logg'][np.where((T1['Temp'] == 10**LogTeff) & (T1['Logg'] == Logg))], modelset=modelset, wave=True)
 		return waves2, flux2
 
 	#print(10**LogTeff)
 	#print(T1['Temp'][np.where(T1['Temp'] <= 10**LogTeff)].data)
-	x0 = T1['Temp'][np.where(T1['Temp'] <= 10**LogTeff)][-1]
-	x1 = T1['Temp'][np.where(T1['Temp'] >= 10**LogTeff)][0]
-	y0 = list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )]))[-1]
-	y1 = list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )]))[0]
+	x0 = np.max(T1['Temp'][np.where(T1['Temp'] <= 10**LogTeff)])
+	x1 = np.min(T1['Temp'][np.where(T1['Temp'] >= 10**LogTeff)])
+	y0 = np.max(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )])))
+	y1 = np.min(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
 	
 
 	# Check if the gridpoint exists within the model ranges
