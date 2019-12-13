@@ -12,6 +12,7 @@ import copy
 import time
 import os
 import sys
+import scipy as sp
 
 
 def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_multiplier, **kwargs):
@@ -105,7 +106,8 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 		# contunuum correction (not for OSIRIS data)
 		#model = nsp.continuum(data=data, mdl=model)
 		if smooth:
-			smoothfluxmed = medfilt(model.flux, kernel_size=151)
+			smoothfluxmed = sp.ndimage.filters.uniform_filter(model.flux, size=200) #replica of IDL
+
 			model.flux -= smoothfluxmed
 		
 		# flux multiplicate

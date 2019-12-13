@@ -5,7 +5,7 @@ import numpy as np
 from astropy.io import fits, ascii
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
-import osiris_fmp as nsp
+import osiris_fmp as ospf
 #import splat
 #import splat.model as spmd
 
@@ -62,8 +62,8 @@ class Model():
 
     Examples
     --------
-    >>> import osiris_pip as nsp
-    >>> model = nsp.Model(teff=2300, logg=5.5, order=33, path='/path/to/models')
+    >>> import osiris_pip as ospf
+    >>> model = ospf.Model(teff=2300, logg=5.5, order=33, path='/path/to/models')
     >>> model.plot()
     """
     def __init__(self, **kwargs):
@@ -104,20 +104,20 @@ class Model():
             #print('TEST1', self.order, self.instrument, self.band, self.modelset)
             
             if self.pgs == None and self.modelset != 'agss09-dusty':
-                #wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
+                #wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
+                wave, flux = ospf.forward_model.InterpolateModel.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                 instrument=self.instrument, band=self.band)
             elif self.pgs != None and self.modelset != 'agss09-dusty':
-                #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
+                #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_Log3D(self.teff, self.logg, np.log10(self.pgs), modelset=self.modelset, 
+                wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_Log3D(self.teff, self.logg, np.log10(self.pgs), modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
             elif self.modelset == 'agss09-dusty':
                 #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
-                #wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
+                #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
-                wave, flux = nsp.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
+                wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
             #print('Wave', wave.data)
             #print('Flux', flux.data)
