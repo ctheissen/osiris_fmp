@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import numpy as np
 import sys, os, os.path, time
 from astropy.table import Table
@@ -16,6 +15,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
     if instrument == 'OSIRIS':
         bandname  = '%s-%s-RAW'%(instrument, band)
     if instrument == 'CHARIS':
+        bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument == 'SPEX':
         bandname  = '%s-%s-RAW'%(instrument, band)
 
     # Check the model set
