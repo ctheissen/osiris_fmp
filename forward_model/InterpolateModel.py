@@ -1,4 +1,3 @@
-import smart
 import numpy as np
 import sys, os, os.path, time
 from astropy.table import Table
@@ -79,19 +78,9 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
 
         if modelset.lower() == 'btsettl-cifist2011c': 
                 filename = 'PHOENIX-BTSETTL-CIFIST2011C_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
-
-        if instrument.lower() == 'spex': 
-            #print('SPEX')
-            #print(temp, logg, alpha)
             
-            if modelset == 'phoenix-aces-agss-cond-2011':
-                filename = 'PHOENIX_ACES_AGSS_COND_2011_t{0:03d}'.format(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_z{0:.2f}'.format(float(metal)) + '_alpha{0:.2f}'.format(float(alpha)) + '_NIRSPEC-O' + str(order) + '-RAW.txt'
-            
-            elif modelset == 'sonora-2018':
-                filename = 'SONORA_2018_t{0:03d}'.format(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_FeH{0:.2f}'.format(0) + '_Y{0:.2f}'.format(0.28) + '_CO{0:.2f}'.format(1.00) + '_NIRSPEC-O' + str(order) + '-RAW.txt'
-
-        #if instrument.lower() == 'osiris':
-        #    filename = gridfile['File'][np.where( (gridfile['Temp']==temp) & (gridfile['Logg']==logg) & (gridfile['Metal']==metal) & (gridfile['Alpha']==alpha) )].data[0]
+        if modelset == 'sonora-2018':
+                filename = 'SONORA-2018_t{0:03d}'.format(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_FeH{0:.2f}'.format(0) + '_Y{0:.2f}'.format(0.28) + '_CO{0:.2f}'.format(1.00) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
 
         #print(filename)
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
