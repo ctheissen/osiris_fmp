@@ -12,18 +12,18 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
     BASE, NAME = os.path.split(FULL_PATH)
 
     # Check the instrument and band
-    if instrument == 'OSIRIS':
-        bandname  = '%s-%s-RAW'%(instrument, band)
-    if instrument == 'CHARIS':
-        bandname  = '%s-%s-RAW'%(instrument, band)
-    if instrument == 'SPEX':
-        bandname  = '%s-%s-RAW'%(instrument, band)
+    if instrument.upper() == 'OSIRIS':
+        bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
+    if instrument.upper() == 'CHARIS':
+        bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
+    if instrument.upper() == 'SPEX':
+        bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
 
     # Check the model set
     if modelset == 'aces-pso318':
-        path = BASE + '/../libraries/aces-pso318/%s/'%bandname
+        path = BASE + '/../libraries/aces-pso318/%s/'%bandname.upper()
     elif modelset == 'agss09-dusty' :
-        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/%s/'%bandname
+        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/%s/'%bandname.upper()
     else:
         raise ValueError('Only aces-pso318 and agss09-dusty modelset available for 3D interpolation')
         
