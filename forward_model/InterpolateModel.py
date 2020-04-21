@@ -67,6 +67,8 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
         instrument = kwargs.get('instrument', 'nirspec')
         band       = kwargs.get('band', None)
 
+        #print(temp, logg, metal)
+
         if gridfile is None:
             raise ValueError('Model gridfile must be provided.') 
 
