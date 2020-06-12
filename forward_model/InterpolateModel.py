@@ -30,6 +30,9 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
     elif modelset.lower() == 'sonora-2018': # Need to fix this
         path     = BASE + '/../libraries/SONORA-2018/%s-%s-RAW/'%(instrument.upper(), band)
         Gridfile = BASE + '/../libraries/SONORA-2018/SONORA_2018_gridparams.csv'
+    elif modelset.lower() == 'agss09-dusty' :
+        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/%s-%s-RAW/'%(instrument.upper(), band.upper())
+        Gridfile = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/AGSS09-DUSTY_gridparams.csv'
     '''
     elif instrument.lower() == 'osiris': # Still need to fix this one
         if modelset.lower() == 'btsettl08':
@@ -80,7 +83,10 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
 
         if modelset.lower() == 'btsettl-cifist2011c': 
                 filename = 'PHOENIX-BTSETTL-CIFIST2011C_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
-            
+
+        if modelset.lower() == 'agss09-dusty': 
+                filename = 'AGSS09-DUSTY_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
+                        
         if modelset == 'sonora-2018':
                 filename = 'SONORA-2018_t{0:03d}'.format(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_FeH{0:.2f}'.format(0) + '_Y{0:.2f}'.format(0.28) + '_CO{0:.2f}'.format(1.00) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
 

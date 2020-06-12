@@ -112,8 +112,12 @@ class Model():
             elif self.pgs == None and self.modelset.lower() != 'agss09-dusty':
                 #wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
-                wave, flux = ospf.forward_model.InterpolateModel.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
-                                                                                instrument=self.instrument, band=self.band)
+                if self.instrument.lower() == 'spex':
+                    wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
+                                                                                     instrument=self.instrument, band=self.band) 
+                else: 
+                    wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
+                                                                                     instrument=self.instrument, band=self.band)
             elif self.pgs != None and self.modelset.lower() != 'agss09-dusty':
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
@@ -123,7 +127,11 @@ class Model():
                 #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
-                wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
+                if self.instrument.lower() == 'spex':
+                    wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
+                                                                                     instrument=self.instrument, band=self.band) 
+                else: 
+                    wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
 
 
