@@ -23,7 +23,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
     if modelset == 'aces-pso318':
         path = BASE + '/../libraries/aces-pso318/%s/'%bandname.upper()
     elif modelset == 'agss09-dusty' :
-        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/%s/'%bandname.upper()
+        path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/%s/'%bandname.upper()
     else:
         raise ValueError('Only aces-pso318 and agss09-dusty modelset available for 3D interpolation')
         
