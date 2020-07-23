@@ -31,7 +31,7 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 
 	# read in the parameters
 	modelset   = kwargs.get('modelset', 'aces2013')
-	lsf        = kwargs.get('lsf', 6.0)   # instrumental LSF
+	lsf        = kwargs.get('lsf', None)   # instrumental LSF
 	pgs        = kwargs.get('pgs', None)  # pgs
 	vsini_set  = kwargs.get('vsini_set', True) # apply telluric
 	tell       = kwargs.get('tell', True) # apply telluric
@@ -66,8 +66,9 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 		model = nsp.applyTelluric(model=model, alpha=alpha, airmass='1.5')
 	#print('TEST3', model.flux)
 
-	# OSIRIS LSF
-	model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
+	# Line Spread Function
+	if lsf is not None:
+		model.flux = nsp.broaden(wave=model.wave, flux=model.flux, vbroad=lsf, rotate=False, gaussian=True)
 	#print('TEST4', model.flux)
 	# add a fringe pattern to the model
 	#model.flux *= (1+amp*np.sin(freq*(model.wave-phase)))
