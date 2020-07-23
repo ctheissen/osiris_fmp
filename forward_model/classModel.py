@@ -103,7 +103,11 @@ class Model():
 
             #print('TEST1', self.order, self.instrument, self.band, self.modelset)
             
-            if self.pgs == None and self.modelset != 'agss09-dusty':
+            if self.modelset == 'phoenix-aces-agss-cond-2011':
+                wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
+                                                                             instrument=self.instrument, band=self.band)
+
+            elif self.pgs == None and self.modelset != 'agss09-dusty':
                 #wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
@@ -121,7 +125,7 @@ class Model():
                                                                                      instrument=self.instrument, band=self.band)
             #print('Wave', wave.data)
             #print('Flux', flux.data)
-            self.wave = np.array(wave).flatten() * 10000 #convert to Angstrom
+            self.wave = np.array(wave).flatten() #* 10000 #convert to Angstrom
             self.flux = np.array(flux).flatten()
 
             #print('Wave1.5', self.wave)

@@ -86,12 +86,12 @@ class Spectrum():
 		else: 
 
 			#fullpath = self.path + '/' + self.name + '_' + str(self.order) + '.txt'
-			T = Table.read(self.path+'/%s.txt'%self.name, format='ascii', delimiter=' ', comment='#')
-
+			T = Table.read(self.path+'/%s.txt'%self.name, format='ascii')#, delimiter=' ', comment='#')
+			
 			#The indices 0 to 3 correspond to wavelength, flux, noise, and sky
-			self.wave  = T['Wavelength(um)'] * 10000
-			self.flux  = T['Flux(norm)'] 
-			self.noise = T['dFlux(norm)']
+			self.wave  = T['Wavelength'] * 10000
+			self.flux  = T['Flux'] 
+			self.noise = T['dFlux']
 			self.sky   = np.zeros(self.wave.shape) 
 
 		self.mask  = []
