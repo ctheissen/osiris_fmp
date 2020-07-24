@@ -102,23 +102,13 @@ class Model():
             #self.flux = sp.flux.value
 
             #print('TEST1', self.order, self.instrument, self.band, self.modelset)
-<<<<<<< HEAD
             
-            if self.modelset == 'phoenix-aces-agss-cond-2011':
+            if self.modelset.lower() == 'phoenix-aces-agss-cond-2011':
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                              instrument=self.instrument, band=self.band)
 
-            elif self.pgs == None and self.modelset != 'agss09-dusty':
-                #wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
-                #                                                            instrument=self.instrument, band=self.band)
-                wave, flux = ospf.forward_model.InterpolateModel.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
-                                                                                instrument=self.instrument, band=self.band)
-            elif self.pgs != None and self.modelset != 'agss09-dusty':
-=======
-
-            if self.modelset.lower() in ['btsettl-cifist2011c', 'drift-phoenix', 'bt-dusty', 'agss09-dusty']:
+            elif self.modelset.lower() in ['btsettl-cifist2011c', 'drift-phoenix', 'bt-dusty', 'agss09-dusty']:
                 #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
->>>>>>> c17d43b499baba1473f7f80f263b2d65328c454c
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
