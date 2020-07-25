@@ -26,8 +26,8 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
         path     = BASE + '/../libraries/BT-DUSTY/%s-%s-RAW/'%(instrument.upper(), band.upper())
         Gridfile = BASE + '/../libraries/BT-DUSTY/BT-DUSTY_gridparams.csv'
     elif modelset.lower() == 'phoenix-aces-agss-cond-2011':
-        path     = BASE + '/../libraries/PHOENIX_ACES_AGSS_COND_2011/%s-%s-RAW/'%(instrument.upper(), band.upper())
-        Gridfile = BASE + '/../libraries/PHOENIX_ACES_AGSS_COND_2011/PHOENIX_ACES_AGSS_COND_2011_gridparams.csv'
+        path     = BASE + '/../libraries/PHOENIX-ACES-AGSS-COND-2011/%s-%s-RAW/'%(instrument.upper(), band.upper())
+        Gridfile = BASE + '/../libraries/PHOENIX-ACES-AGSS-COND-2011/PHOENIX_ACES_AGSS_COND_2011_gridparams.csv'
     elif modelset.lower() == 'sonora-2018': # Need to fix this
         path     = BASE + '/../libraries/SONORA-2018/%s-%s-RAW/'%(instrument.upper(), band)
         Gridfile = BASE + '/../libraries/SONORA-2018/SONORA_2018_gridparams.csv'
@@ -77,9 +77,8 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
             raise ValueError('Model gridfile must be provided.') 
 
         if modelset.lower() == 'phoenix-aces-agss-cond-2011': 
-                #filename = 'PHOENIX_ACES_AGSS_COND_2011_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper())
-                filename = 'PHOENIX_ACES_AGSS_COND_2011_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_%s-Kbb-RAW.txt'%(instrument.upper())
-
+                filename = 'PHOENIX_ACES_AGSS_COND_2011_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper())
+               
         if modelset.lower() == 'drift-phoenix': 
                 filename = 'DRIFT-PHOENIX_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
 
