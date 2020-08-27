@@ -107,7 +107,7 @@ class Model():
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                              instrument=self.instrument, band=self.band)
 
-            elif self.modelset.lower() in ['btsettl-cifist2011c', 'drift-phoenix', 'bt-dusty', 'agss09-dusty']:
+            elif self.modelset.lower() in ['btsettl-cifist2011c', 'drift-phoenix', 'bt-dusty', 'agss09-dusty', 'aces2013']:
                 #print('Params Model2:', self.teff, self.logg, self.z, self.modelset)
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)

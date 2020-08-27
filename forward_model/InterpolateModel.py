@@ -34,6 +34,9 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
     elif modelset.lower() == 'agss09-dusty' :
         path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/%s-%s-RAW/'%(instrument.upper(), band.upper())
         Gridfile = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/AGSS09-DUSTY_gridparams.csv'
+    elif modelset.lower() == 'aces2013' :
+        path = BASE + '/../libraries/aces2013/%s-%s-RAW/'%(instrument.upper(), band.upper())
+        Gridfile = BASE + '/../libraries/aces2013/aces2013-gridparams.csv'
     '''
     elif instrument.lower() == 'osiris': # Still need to fix this one
         if modelset.lower() == 'btsettl08':
@@ -91,9 +94,12 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
         if modelset.lower() == 'agss09-dusty': 
                 filename = 'AGSS09-DUSTY_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_alpha' + '{0:.2f}'.format(float(alpha)) + '_kzz' + '{0:.2f}'.format(float(kzz)) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
                         
-        if modelset == 'sonora-2018':
+        if modelset.lower() == 'sonora-2018':
                 filename = 'SONORA-2018_t{0:03d}'.format(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_FeH{0:.2f}'.format(0) + '_Y{0:.2f}'.format(0.28) + '_CO{0:.2f}'.format(1.00) + '_%s-%s-RAW.txt'%(instrument.upper(), band.upper()) 
-
+        
+        if modelset.lower() == 'aces2013': 
+                filename = 'aces2013_t'+ str(int(temp)) + '_g' + '{0:.2f}'.format(float(logg)) + '_z' + '{0:.2f}'.format(float(metal)) + '_en' + '{0:.2f}'.format(float(alpha)) + '_%s-Kbb-RAW.txt'%(instrument.upper())#, band.upper()) 
+                     
         #print(filename)
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
         #print(Tab['wave'])
