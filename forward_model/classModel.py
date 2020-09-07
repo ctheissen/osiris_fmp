@@ -122,11 +122,15 @@ class Model():
                 else: 
                     wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
+            elif self.modelset.lower() == 'aces-pso318':
+                wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
+                                                                                  instrument=self.instrument, band=self.band)
             elif self.pgs != None and self.modelset.lower() != 'agss09-dusty':
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
                 wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_Log3D(self.teff, self.logg, np.log10(self.pgs), modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)
+
 
 
             #print('Wave', wave.data)

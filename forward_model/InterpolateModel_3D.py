@@ -2,7 +2,7 @@ import numpy as np
 import sys, os, os.path, time
 from astropy.table import Table
 from numpy.linalg import inv, det
-
+import osiris_fmp as ospf
 
 ################################################################
 
@@ -20,8 +20,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
 
     # Check the model set
-    if modelset == 'aces-pso318':
-        path = BASE + '/../libraries/aces-pso318/%s/'%bandname.upper()
+    if modelset.lower() == 'aces-pso318':
+        path = BASE + '/../libraries/ACES-PSO318/%s/'%bandname.upper()
     elif modelset == 'agss09-dusty' :
         path = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-DUSTY/%s/'%bandname.upper()
     else:
@@ -91,21 +91,19 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
 
     def GetModel(temp, logg, pgs, modelset='aces-pso318', wave=False):
         if modelset == 'aces-pso318':
-            filename = 'aces-pso318_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg.data[0])) + '_pgs' + '{}'.format(pgs.data[0]) + '_Kzz' + '{}'.format(kzz) + '_gs' + '{0:.1f}'.format(gs) + '_%s.txt'%bandname
+            metal = 0
+            alpha = 0
+            gs    = 1
             kzz = int(1e8)
-            gs  = 1.
+            filename = 'ACES-PSO318_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg.data[0])) + '_z' + '{0:.2f}'.format(metal) + '_alpha' + '{0:.2f}'.format(alpha) + '_pgs' + '{0:.2f}'.format(pgs.data[0]) +  '_gs' + '{0:.2f}'.format(gs) + '_Kzz' + '{0:.2f}'.format(kzz) + '_%s.txt'%bandname
         elif modelset == 'agss09-dusty':
             kzz = 0.0
             feh = pgs
-            #print('{0:03d}'.format(int(temp.data[0])))
-            #print('_g{0:.2f}'.format(float(logg)))
-            #print('_z{0:.2f}'.format(float(feh)))
-            #print('_Kzz{0:.1f}'.format(float(kzz)))
             filename = 'AGSS09-Dusty_t{0:03d}'.format(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg)) + '_z{0:.2f}'.format(float(feh)) + '_Kzz{0:.1f}'.format(float(kzz)) + '_%s.txt'%bandname
         else:
             raise ValueError('Only aces-pso318 and agss09-dusty modelset available for 3D interpolation')
-        
-        Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
+        #print(filename)
+        Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'], comment='#')
         #print('3', Tab['wave'].data)
         #print('3', Tab['flux'].data)
 
@@ -115,16 +113,17 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
             return Tab['flux']
 
 
-    if modelset == 'aces-pso318':
-        Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams_uniform.csv'
-        T0 = Table.read(Gridfile)
-        T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['gs'] == 1) ) ] # not using Kzz yet!
+    if modelset.lower() == 'aces-pso318':
+        #Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams_uniform.csv'
+        Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams.csv'
+        T0 = Table.read(Gridfile, comment='#')
+        T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['GS'] == 1) ) ] # not using Kzz yet!
 
         # Check if the model already exists (grid point)
-        if (Teff, Logg, PGS) in zip(T1['Temp'], T1['Logg'], T1['pgs']): 
-            index0 = np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg) & (T1['pgs'] == PGS) )
-            flux2  = GetModel(T1['Temp'][index0], T1['Logg'][index0], T1['pgs'][index0], modelset=modelset )
-            waves2 = GetModel(T1['Temp'][index0], T1['Logg'][index0], T1['pgs'][index0], modelset=modelset, wave=True)
+        if (Teff, Logg, PGS) in zip(T1['Temp'], T1['Logg'], T1['PGS']): 
+            index0 = np.where( (T1['Temp'] == Teff) & (T1['Logg'] == Logg) & (T1['PGS'] == PGS) )
+            flux2  = GetModel(T1['Temp'][index0], T1['Logg'][index0], T1['PGS'][index0], modelset=modelset )
+            waves2 = GetModel(T1['Temp'][index0], T1['Logg'][index0], T1['PGS'][index0], modelset=modelset, wave=True)
             return waves2, flux2
 
         #x1     = np.floor(Teff/100.)*100
@@ -149,19 +148,19 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         #print(y0, Logg, y1)
         #z0 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] <= PGS) )][-1]
         #z1 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] >= PGS) )][0]
-        #print(x0, y0, list(set(T1['pgs'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['pgs'] <= PGS))])))
-        #print(x1, y1, list(set(T1['pgs'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['pgs'] <= PGS))])))
-        #print(x0, y0, list(set(T1['pgs'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['pgs'] >= PGS))])))
-        #print(x1, y1, list(set(T1['pgs'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['pgs'] >= PGS))])))
-        z0 = np.max(list(set(T1['pgs'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['pgs'] <= PGS) )]) & set(T1['pgs'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] <= PGS)) )])))
-        z1 = np.min(list(set(T1['pgs'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['pgs'] >= PGS) )]) & set(T1['pgs'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] >= PGS)) )])))
+        #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS))])))
+        #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] <= PGS))])))
+        #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS))])))
+        #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] >= PGS))])))
+        z0 = np.max(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] <= PGS)) )])))
+        z1 = np.min(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] >= PGS)) )])))
         #print(z0, PGS, z1)
 
         # Check if the gridpoint exists within the model ranges
         for x in [x0, x1]:
             for y in [y0, y1]:
                 for z in [z0, z1]:
-                    if (x, y, z) not in zip(T1['Temp'], T1['Logg'], T1['pgs']):
+                    if (x, y, z) not in zip(T1['Temp'], T1['Logg'], T1['PGS']):
                         print('No Model', x, y, z)
                         return 1
         '''
@@ -175,35 +174,36 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         print(np.log10(T1['Temp'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))]), np.log10(T1['Logg'][np.where( (T1['Temp'] == x2) & (T1['Logg'] == y2))]))
         '''
         # Get the 16 points
-        ind000 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['pgs'] == z0) ) # 000
-        ind100 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['pgs'] == z0) ) # 100
-        ind010 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z0) ) # 010
-        ind110 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z0) ) # 110
-        ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 001
-        ind101 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['pgs'] == z1) ) # 101
-        ind011 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 011
-        ind111 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['pgs'] == z1) ) # 111
-        Points =  [ [np.log10(T1['Temp'][ind000]), T1['Logg'][ind000], np.log10(T1['pgs'][ind000]), 
-                     np.log10(GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['pgs'][ind000], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind100]), T1['Logg'][ind100], np.log10(T1['pgs'][ind100]), 
-                     np.log10(GetModel(T1['Temp'][ind100], T1['Logg'][ind100], T1['pgs'][ind100], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind010]), T1['Logg'][ind010], np.log10(T1['pgs'][ind010]),  
-                     np.log10(GetModel(T1['Temp'][ind010], T1['Logg'][ind010], T1['pgs'][ind010], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind110]), T1['Logg'][ind110], np.log10(T1['pgs'][ind110]),  
-                     np.log10(GetModel(T1['Temp'][ind110], T1['Logg'][ind110], T1['pgs'][ind110], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind001]), T1['Logg'][ind001], np.log10(T1['pgs'][ind001]), 
-                     np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['pgs'][ind001], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind101]), T1['Logg'][ind101], np.log10(T1['pgs'][ind101]), 
-                     np.log10(GetModel(T1['Temp'][ind101], T1['Logg'][ind101], T1['pgs'][ind101], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind011]), T1['Logg'][ind011], np.log10(T1['pgs'][ind011]), 
-                     np.log10(GetModel(T1['Temp'][ind011], T1['Logg'][ind011], T1['pgs'][ind011], modelset=modelset))],
-                    [np.log10(T1['Temp'][ind111]), T1['Logg'][ind111], np.log10(T1['pgs'][ind111]), 
-                     np.log10(GetModel(T1['Temp'][ind111], T1['Logg'][ind111], T1['pgs'][ind111], modelset=modelset))],
+        ind000 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['PGS'] == z0) ) # 000
+        ind100 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['PGS'] == z0) ) # 100
+        ind010 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['PGS'] == z0) ) # 010
+        ind110 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] == z0) ) # 110
+        ind001 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y0) & (T1['PGS'] == z1) ) # 001
+        ind101 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y0) & (T1['PGS'] == z1) ) # 101
+        ind011 = np.where( (T1['Temp'] == x0) & (T1['Logg'] == y1) & (T1['PGS'] == z1) ) # 011
+        ind111 = np.where( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] == z1) ) # 111
+        Points =  [ [np.log10(T1['Temp'][ind000]), T1['Logg'][ind000], np.log10(T1['PGS'][ind000]), 
+                     np.log10(GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['PGS'][ind000], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind100]), T1['Logg'][ind100], np.log10(T1['PGS'][ind100]), 
+                     np.log10(GetModel(T1['Temp'][ind100], T1['Logg'][ind100], T1['PGS'][ind100], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind010]), T1['Logg'][ind010], np.log10(T1['PGS'][ind010]),  
+                     np.log10(GetModel(T1['Temp'][ind010], T1['Logg'][ind010], T1['PGS'][ind010], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind110]), T1['Logg'][ind110], np.log10(T1['PGS'][ind110]),  
+                     np.log10(GetModel(T1['Temp'][ind110], T1['Logg'][ind110], T1['PGS'][ind110], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind001]), T1['Logg'][ind001], np.log10(T1['PGS'][ind001]), 
+                     np.log10(GetModel(T1['Temp'][ind001], T1['Logg'][ind001], T1['PGS'][ind001], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind101]), T1['Logg'][ind101], np.log10(T1['PGS'][ind101]), 
+                     np.log10(GetModel(T1['Temp'][ind101], T1['Logg'][ind101], T1['PGS'][ind101], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind011]), T1['Logg'][ind011], np.log10(T1['PGS'][ind011]), 
+                     np.log10(GetModel(T1['Temp'][ind011], T1['Logg'][ind011], T1['PGS'][ind011], modelset=modelset))],
+                    [np.log10(T1['Temp'][ind111]), T1['Logg'][ind111], np.log10(T1['PGS'][ind111]), 
+                     np.log10(GetModel(T1['Temp'][ind111], T1['Logg'][ind111], T1['PGS'][ind111], modelset=modelset))],
                   ]
         #print(Points)
-        waves2 = GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['pgs'][ind000], wave=True, modelset=modelset)
+        waves2 = GetModel(T1['Temp'][ind000], T1['Logg'][ind000], T1['PGS'][ind000], wave=True, modelset=modelset)
 
-        return waves2, trilinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), Points)
+        #return waves2, trilinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), Points)
+        return waves2, ospf.utils.interpolations.trilinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), Points)
 
     elif modelset == 'agss09-dusty':
         Gridfile = BASE + '/../libraries/PHOENIX-ACES/2019/AGSS09-Dusty/AGSS09-Dusty_gridparams.csv'
