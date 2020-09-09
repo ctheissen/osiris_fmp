@@ -115,7 +115,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
 
     if modelset.lower() == 'aces-pso318':
         #Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams_uniform.csv'
-        Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams.csv'
+        Gridfile = BASE + '/../libraries/ACES-PSO318/ACES-PSO318_gridparams.csv'
         T0 = Table.read(Gridfile, comment='#')
         T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['GS'] == 1) ) ] # not using Kzz yet!
 

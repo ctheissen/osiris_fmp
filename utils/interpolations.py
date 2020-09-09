@@ -61,13 +61,14 @@ def trilinear_interpolation(x, y, z, points):
 
     (x0, y0, z0, q000), (x1, y0, z0, q100), (x0, y1, z0, q010), (x1, y1, z0, q110), \
     (x0, y0, z1, q001), (x1, y0, z1, q101), (x0, y1, z1, q011), (x1, y1, z1, q111),  = points
-    #x0 = x0.data[0]
-    #x1 = x1.data[0]
-    #y0 = y0.data[0]
-    #y1 = y1.data[0]
-    #z0 = z0.data[0]
-    #z1 = z1.data[0]
+    x0 = x0.data[0]
+    x1 = x1.data[0]
+    y0 = y0.data[0]
+    y1 = y1.data[0]
+    z0 = z0.data[0]
+    z1 = z1.data[0]
     #print(x0.data[0],x1.data[0],y0.data[0],y1.data[0],z0.data[0],z1.data[0])
+    #print(z0, z1)
 
     # Check if we just need bilinear interpolation!
     if x0 == x1: 
