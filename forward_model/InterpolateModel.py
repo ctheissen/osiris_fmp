@@ -55,6 +55,7 @@ def InterpModel(teff, logg=4, metal=0, alpha=0, modelset='btsettl-cifist2011c', 
             path     = BASE + '/../libraries/MARCS_APOGEE_DR15/APOGEE-RAW/'
             Gridfile = BASE + '/../libraries/MARCS_APOGEE_DR15/MARCS_APOGEE_DR15_gridparams_apogee.csv'
     '''
+    #print(path)
     # Read the grid file
     #T1 = Table.read(Gridfile)
     T1 = np.genfromtxt(Gridfile, delimiter=',', names=True)
