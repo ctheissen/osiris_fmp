@@ -137,7 +137,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         #print(T1['Temp'][np.where(T1['Temp'] >= x2)])
         x0 = np.max(T1['Temp'][np.where(T1['Temp'] <= Teff)])
         x1 = np.min(T1['Temp'][np.where(T1['Temp'] >= Teff)])
-        print(x0, Teff, x1)
+        #print(x0, Teff, x1)
         #y0 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] <= Logg) )][-1]
         #y1 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] >= Logg) )][0]
         #print(x0, list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )])))
@@ -146,17 +146,17 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         #print(x1, list(set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
         y0 = np.max(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )])))
         y1 = np.min(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
-        print(y0, Logg, y1)
+        #print(y0, Logg, y1)
         #z0 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] <= PGS) )][-1]
         #z1 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] >= PGS) )][0]
         #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS))])))
         #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] <= PGS))])))
         #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS))])))
         #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] >= PGS))])))
-        print(PGS)
+        #print(PGS)
         z0 = np.max(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] <= PGS)) )])))
         z1 = np.min(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] >= PGS)) )])))
-        print(z0, PGS, z1)
+        #print(z0, PGS, z1)
 
         # Check if the gridpoint exists within the model ranges
         for x in [x0, x1]:
