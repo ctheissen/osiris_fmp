@@ -95,7 +95,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
             alpha = 0
             gs    = 1
             kzz = int(1e8)
-            filename = 'ACES-PSO318_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg.data[0])) + '_z' + '{0:.2f}'.format(metal) + '_alpha' + '{0:.2f}'.format(alpha) + '_pgs' + '{0:.2f}'.format(pgs.data[0]) +  '_gs' + '{0:.2f}'.format(gs) + '_Kzz' + '{0:.2f}'.format(kzz) + '_%s.txt'%bandname
+            filename = 'ACES-PSO318_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg.data[0])) + '_z' + '{0:.2f}'.format(metal) + '_alpha' + '{0:.2f}'.format(alpha) + '_pgs' + '{0:.2f}'.format(pgs.data[0]) +  '_gs' + '{0:.2f}'.format(gs) + '_kzz' + '{0:.2f}'.format(kzz) + '_%s.txt'%bandname
         elif modelset == 'agss09-dusty':
             kzz = 0.0
             feh = pgs
@@ -115,7 +115,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
 
     if modelset.lower() == 'aces-pso318':
         #Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams_uniform.csv'
-        Gridfile = BASE + '/../libraries/ACES-PSO318/ACES-PSO318_gridparams.csv'
+        #Gridfile = BASE + '/../libraries/ACES-PSO318/ACES-PSO318_gridparams.csv'
+        Gridfile = BASE + '/../libraries/ACES-PSO318/ACES-PSO318_gridparams_uniform.csv'
         T0 = Table.read(Gridfile, comment='#')
         T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['GS'] == 1) ) ] # not using Kzz yet!
 
@@ -136,7 +137,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         #print(T1['Temp'][np.where(T1['Temp'] >= x2)])
         x0 = np.max(T1['Temp'][np.where(T1['Temp'] <= Teff)])
         x1 = np.min(T1['Temp'][np.where(T1['Temp'] >= Teff)])
-        #print(x0, Teff, x1)
+        print(x0, Teff, x1)
         #y0 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] <= Logg) )][-1]
         #y1 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] >= Logg) )][0]
         #print(x0, list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )])))
@@ -145,16 +146,17 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         #print(x1, list(set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
         y0 = np.max(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] <= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] <= Logg) ) )])))
         y1 = np.min(list(set(T1['Logg'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] >= Logg) ) )]) & set(T1['Logg'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] >= Logg) ) )])))
-        #print(y0, Logg, y1)
+        print(y0, Logg, y1)
         #z0 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] <= PGS) )][-1]
         #z1 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] >= PGS) )][0]
         #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS))])))
         #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] <= PGS))])))
         #print(x0, y0, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS))])))
         #print(x1, y1, list(set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) ) & (T1['PGS'] >= PGS))])))
+        print(PGS)
         z0 = np.max(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] <= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] <= PGS)) )])))
         z1 = np.min(list(set(T1['PGS'][np.where( ( (T1['Temp'] == x0) & (T1['Logg'] == y0) ) & (T1['PGS'] >= PGS) )]) & set(T1['PGS'][np.where( ( (T1['Temp'] == x1) & (T1['Logg'] == y1) & (T1['PGS'] >= PGS)) )])))
-        #print(z0, PGS, z1)
+        print(z0, PGS, z1)
 
         # Check if the gridpoint exists within the model ranges
         for x in [x0, x1]:

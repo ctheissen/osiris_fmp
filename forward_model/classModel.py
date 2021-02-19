@@ -113,17 +113,17 @@ class Model():
                 #                                                                  instrument=self.instrument, band=self.band)
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
                                                                                      instrument=self.instrument, band=self.band)            
-            elif self.pgs == None and self.modelset.lower() != 'agss09-dusty':
+            #elif self.pgs == None and self.modelset.lower() != 'agss09-dusty':
                 #wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, modelset=self.modelset, 
                 #                                                            instrument=self.instrument, band=self.band)
-                if self.instrument.lower() == 'spex':
-                    wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
-                                                                                     instrument=self.instrument, band=self.band) 
-                else: 
-                    wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
-                                                                                     instrument=self.instrument, band=self.band)
+            #    if self.instrument.lower() == 'spex':
+            #        wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
+            #                                                                         instrument=self.instrument, band=self.band) 
+            #    else: 
+            #        wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
+            #                                                                         instrument=self.instrument, band=self.band)
             elif self.modelset.lower() == 'aces-pso318':
-                if self.pgs == None: self.pgs == 500000
+                if self.pgs == None: self.pgs = 500000
                 wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                                                                                   instrument=self.instrument, band=self.band)
             elif self.pgs != None and self.modelset.lower() != 'agss09-dusty':
