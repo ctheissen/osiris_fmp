@@ -18,6 +18,8 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
         bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
     if instrument.upper() == 'SPEX':
         bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
+    if instrument.upper() == 'NIRSPEC':
+        bandname  = '%s-%s-RAW'%(instrument.upper(), band.upper())
 
     # Check the model set
     if modelset.lower() == 'aces-pso318':
