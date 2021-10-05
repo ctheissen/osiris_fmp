@@ -1,9 +1,10 @@
+from .initialize import *
 from .forward_model.barycorr import barycorr
 from .forward_model.classModel import Model
 from .forward_model.classSpectrum import Spectrum
 from .forward_model.integralResample import integralResample
 from .forward_model.InterpolateModel import InterpModel
-#from .forward_model.InterpolateModel_4D import InterpModel_4D
+from .forward_model.InterpolateModel_4D import InterpModel_4D
 from .forward_model.InterpolateModel_3D import InterpModel_3D, InterpModel_Log3D
 from .forward_model.rotation_broaden import lsf_rotate, broaden
 from .forward_model.continuum import *

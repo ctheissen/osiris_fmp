@@ -71,11 +71,13 @@ class Model():
         self.instrument = kwargs.get('instrument')
 
         if self.instrument != None:
+            self.wave = kwargs.get('wave', None)
             self.teff = kwargs.get('teff', 3000.)
             self.logg = kwargs.get('logg', 5.)
             self.z    = kwargs.get('z', 0)
             self.en   = kwargs.get('en', 0)
             self.pgs  = kwargs.get('pgs', None)
+            self.gs   = kwargs.get('gs', None)
             self.modelset   = kwargs.get('modelset', 'aces-pso318')
             self.instrument = kwargs.get('instrument', 'OSIRIS')
             self.band       = kwargs.get('band', 'Kbb')
@@ -101,7 +103,7 @@ class Model():
             #self.wave = sp.wave.value*10000 #convert to Angstrom
             #self.flux = sp.flux.value
 
-            #print('TEST1', self.order, self.instrument, self.band, self.modelset)
+            #print('TEST1', self.instrument, self.band, self.modelset, self.wave)
             
             if self.modelset.lower() == 'phoenix-aces-agss-cond-2011':
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 
@@ -122,15 +124,23 @@ class Model():
             #    else: 
             #        wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.z, modelset=self.modelset, 
             #                                                                         instrument=self.instrument, band=self.band)
-            elif self.modelset.lower() in ['aces-pso318', 'hr8799c']:
+            elif self.modelset.lower() in ['aces-pso318', 'hr8799c', 'vhs1256-pso'] and self.pgs != None and self.gs == None:
                 if self.pgs == None: self.pgs = 500000
                 wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                                                                                   instrument=self.instrument, band=self.band)
-            elif self.pgs != None and self.modelset.lower() != 'agss09-dusty':
+            elif self.modelset.lower() in ['vhs1256-pso'] and self.gs != None:
+                #if self.pgs == None: self.pgs = 500000
+                wave, flux = ospf.forward_model.InterpolateModel_4D.InterpModel_4D(self.teff, self.logg, self.pgs, self.gs, modelset=self.modelset,
+                                                                                  instrument=self.instrument, band=self.band)
+                #print('1', wave)
+                #print('2', flux)
+            elif self.pgs != None and self.modelset.lower() != 'agss09-dusty' and self.wave != None:
                 #wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_3D(self.teff, self.logg, self.pgs, modelset=self.modelset, 
                 #                                                                  instrument=self.instrument, band=self.band)
                 wave, flux = ospf.forward_model.InterpolateModel_3D.InterpModel_Log3D(self.teff, self.logg, np.log10(self.pgs), modelset=self.modelset, 
-                                                                                     instrument=self.instrument, band=self.band)
+                                                                                   instrument=self.instrument, band=self.band)
+
+
 
 
 

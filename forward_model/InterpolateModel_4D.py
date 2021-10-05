@@ -1,9 +1,48 @@
-#!/usr/bin/env python
 import numpy as np
 import sys, os, os.path, time
 from astropy.table import Table
 from numpy.linalg import inv, det
+from numpy.linalg import inv, det
+import osiris_fmp as ospf
 
+
+#############
+
+def GetModel(temp, logg, pgs, gs, modelset='aces-pso318', wave=False, bandname=None):
+
+    FULL_PATH  = os.path.realpath(__file__)
+    BASE, NAME = os.path.split(FULL_PATH)
+
+    #print(Teff, Logg, PGS, GS)
+
+    # Check the instrument and band
+    #bandname = '%s-%s-RAW'%(instrument.upper(), band.upper())
+
+    # Check the model set
+    if modelset.lower() == 'aces-pso318':
+        path = BASE + '/../libraries/aces-pso318/%s/'%bandname
+    if modelset.lower() == 'vhs1256-pso':
+        path = BASE + '/../libraries/VHS1256_PSO/%s/'%bandname
+    else:
+        raise ValueError('Only [aces-pso318, vhs1256-pso] modelsets available for 4D interpolation')
+    kzz = int(1e8)
+    #print(temp.data[0], logg.data[0], pgs.data[0], gs.data[0])
+    if modelset.lower() == 'aces-pso318':
+        filename = 'aces-pso318_t'+ str(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_pgs{}'.format(pgs) + '_kzz{0:.2f}'.format(kzz) + '_gs{0:.1f}'.format(gs) + '_%s.txt'%bandname
+        #print('File', filename)        if modelset.lower() == 'aces-pso318':
+    elif modelset.lower() == 'vhs1256-pso':
+        metal = 0
+        alpha = 0
+        filename = 'VHS1256_PSO_t'+ str(int(temp)) + '_g{0:.2f}'.format(float(logg)) + '_z{0:.2f}'.format(metal) + '_alpha{0:.2f}'.format(alpha) + '_pgs{0:.2f}'.format(pgs) + '_gs{0:.2f}'.format(gs) + '_kzz{0:.2f}'.format(kzz) + '_%s.txt'%bandname
+        #print('File', filename)
+    else:
+        raise ValueError('Only [aces-pso318, vhs1256-pso] modelsets available for 4D interpolation')
+    Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
+
+    if wave:
+        return Tab['wave']
+    else:
+        return Tab['flux']
 
 ################################################################
 
@@ -12,103 +51,34 @@ def InterpModel_4D(Teff, Logg, PGS, GS, modelset='aces-pso318', instrument='OSIR
     FULL_PATH  = os.path.realpath(__file__)
     BASE, NAME = os.path.split(FULL_PATH)
 
+    #print(Teff, Logg, PGS, GS)
+
     # Check the instrument and band
-    if instrument == 'OSIRIS':
-        bandname  = '%s-%s-RAW'%(instrument, band)
-    if instrument == 'CHARIS':
-        bandname  = '%s-%s-RAW'%(instrument, band)
+    bandname = '%s-%s-RAW'%(instrument.upper(), band.upper())
 
     # Check the model set
-    if modelset == 'aces-pso318':
+    if modelset.lower() == 'aces-pso318':
         path = BASE + '/../libraries/aces-pso318/%s/'%bandname
+    if modelset.lower() == 'vhs1256-pso':
+        path = BASE + '/../libraries/VHS1256_PSO/%s/'%bandname
     else:
         raise ValueError('Only aces-pso318 modelset available for 4D interpolation')
         
-
-    def quadlinear_interpolation(x, y, z, t, points):
-        '''Interpolate (x,y) from values associated with 16 points.
-
-        Custom routine
-
-        '''
-
-        (x0, y0, z0, t0, q0000), (x1, y0, z0, t0, q1000), (x0, y1, z0, t0, q0100), (x0, y0, z1, t0, q0010), (x0, y0, z0, t1, q0001), \
-        (x1, y0, z0, t1, q1001), (x0, y1, z0, t1, q0101), (x0, y0, z1, t1, q0011), (x1, y0, z1, t1, q1011), (x0, y1, z1, t1, q0111), \
-        (x1, y1, z1, t1, q1111), (x0, y1, z1, t0, q0110), (x1, y0, z1, t0, q1010), (x1, y1, z0, t0, q1100), (x1, y1, z0, t1, q1101), \
-        (x1, y1, z1, t0, q1110) = points
-        x0 = x0.data[0]
-        x1 = x1.data[0]
-        y0 = y0.data[0]
-        y1 = y1.data[0]
-        z0 = z0.data[0]
-        z1 = z1.data[0]
-        t0 = t0.data[0]
-        t1 = t1.data[0]
-        t1 = 2
-        print(x0,x1,y0,y1,z0,z1,t0,t1)
-
-        #print(x, y, x0.data, y0.data, _x0.data, y1.data, x1.data, _y0.data, _x1.data, _y1.data)
-        #print(not x1 <= x <= x2, not y1 <= y <= y2)
-        #if x0 != _x0 or x1 != _x1 or y0 != _y0 or y1 != _y1:
-        #    raise ValueError('points do not form a rectangle')
-        #if not x0 <= x <= x1 or not y0 <= y <= y1:
-        #    raise ValueError('(x, y) not within the rectangle')
-
-        c = np.array([ [1., x0, y0, z0, t0, x0*y0, x0*z0, x0*t0, y0*z0, y0*t0, z0*t0, x0*y0*z0, x0*y0*t0, x0*z0*t0, y0*z0*t0, x0*y0*z0*t0], #0000
-                       [1., x1, y0, z0, t0, x1*y0, x1*z0, x1*t0, y0*z0, y0*t0, z0*t0, x1*y0*z0, x1*y0*t0, x1*z0*t0, y0*z0*t0, x1*y0*z0*t0], #1000
-                       [1., x0, y1, z0, t0, x0*y1, x0*z0, x0*t0, y1*z0, y1*t0, z0*t0, x0*y1*z0, x0*y1*t0, x0*z0*t0, y1*z0*t0, x0*y1*z0*t0], #0100
-                       [1., x0, y0, z1, t0, x0*y0, x0*z1, x0*t0, y0*z1, y0*t0, z1*t0, x0*y0*z1, x0*y0*t0, x0*z1*t0, y0*z1*t0, x0*y0*z1*t0], #0010
-                       [1., x0, y0, z0, t1, x0*y0, x0*z0, x0*t1, y0*z0, y0*t1, z0*t1, x0*y0*z0, x0*y0*t1, x0*z0*t1, y0*z0*t1, x0*y0*z0*t1], #0001
-                       [1., x1, y0, z0, t1, x1*y0, x1*z0, x1*t1, y0*z0, y0*t1, z0*t1, x1*y0*z0, x1*y0*t1, x1*z0*t1, y0*z0*t1, x1*y0*z0*t1], #1001
-                       [1., x0, y1, z0, t1, x0*y1, x0*z0, x0*t1, y1*z0, y1*t1, z0*t1, x0*y1*z0, x0*y1*t1, x0*z0*t1, y1*z0*t1, x0*y1*z0*t1], #0101
-                       [1., x0, y0, z1, t1, x0*y0, x0*z1, x0*t1, y0*z1, y0*t1, z1*t1, x0*y0*z1, x0*y0*t1, x0*z1*t1, y0*z1*t1, x0*y0*z1*t1], #0011
-                       [1., x1, y0, z1, t1, x1*y0, x1*z1, x1*t1, y0*z1, y0*t1, z1*t1, x1*y0*z1, x1*y0*t1, x1*z1*t1, y0*z1*t1, x1*y0*z1*t1], #1011
-                       [1., x0, y1, z1, t1, x0*y1, x0*z1, x0*t1, y1*z1, y1*t1, z1*t1, x0*y1*z1, x0*y1*t1, x0*z1*t1, y1*z1*t1, x0*y1*z1*t1], #0111
-                       [1., x1, y1, z1, t1, x1*y1, x1*z1, x1*t1, y1*z1, y1*t1, z1*t1, x1*y1*z1, x1*y1*t1, x1*z1*t1, y1*z1*t1, x1*y1*z1*t1], #1111
-                       [1., x0, y1, z1, t0, x0*y1, x0*z1, x0*t0, y1*z1, y1*t0, z1*t0, x0*y1*z1, x0*y1*t0, x0*z1*t0, y1*z1*t0, x0*y1*z1*t0], #0110
-                       [1., x1, y0, z1, t0, x1*y0, x1*z1, x1*t0, y0*z1, y0*t0, z1*t0, x1*y0*z1, x1*y0*t0, x1*z1*t0, y0*z1*t0, x1*y0*z1*t0], #1010
-                       [1., x1, y1, z0, t0, x1*y1, x1*z0, x1*t0, y1*z0, y1*t0, z0*t0, x1*y1*z0, x1*y1*t0, x1*z0*t0, y1*z0*t0, x1*y1*z0*t0], #1100
-                       [1., x1, y1, z0, t1, x1*y1, x1*z0, x1*t1, y1*z0, y1*t1, z0*t1, x1*y1*z0, x1*y1*t1, x1*z0*t1, y1*z0*t1, x1*y1*z0*t1], #1101
-                       [1., x1, y1, z1, t0, x1*y1, x1*z1, x1*t0, y1*z1, y1*t0, z1*t0, x1*y1*z1, x1*y1*t0, x1*z1*t0, y1*z1*t0, x1*y1*z1*t0], #1110
-                      ], dtype='float')
-        print(c)
-        print(det(c))
-        invc      = inv(c)
-        transinvc = np.transpose(invc)
-
-        final = np.dot(transinvc, [1, x, y, z, t, x*y, x*z, x*t, y*z, y*t, z*t, x*y*z, x*y*t, x*z*t, y*z*t, x*y*z*t])
-        print('Final Sum:', np.sum(final))
-
-
-        interpFlux = 10**( (q0000*final[0] + q1000*final[1] + q0100*final[2] + q0010*final[3] + q0001*final[4] +
-                            q1001*final[5] + q0101*final[6] + q0011*final[7] + q1011*final[8] + q0111*final[9] +
-                            q1111*final[10]+ q0110*final[11]+ q1010*final[12]+ q1100*final[13]+ q1101*final[14]+
-                            q1110*final[15])
-                           )
-
-        #print(x,y,x2,y2, q11 * (x2 - x) * (y2 - y))
-        #print(x,y,x1,y2, q21 * (x - x1) * (y2 - y))
-        #print(x,y,x2,y1, q12 * (x2 - x) * (y - y1))
-        #print(x,y,x1,y1, q22 * (x - x1) * (y - y1))
-        #print('b11', (x2.data - x) * (y2.data - y) / ((x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b12', (x - x1.data) * (y2.data - y) / ((x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b21', (x2.data - x) * (y - y1.data) / ((x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b22', (x - x1.data) * (y - y1.data) / ((x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b11', 10**((x2.data - x) * (y2.data - y) / (x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b12', 10**((x - x1.data) * (y2.data - y) / (x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b21', 10**((x2.data - x) * (y - y1.data) / (x2.data - x1.data) * (y2.data - y1.data)))
-        #print('b22', 10**((x - x1.data) * (y - y1.data) / (x2.data - x1.data) * (y2.data - y1.data)))
-        return interpFlux
 
 
     def GetModel(temp, logg, pgs, gs, modelset='aces-pso318', wave=False):
         kzz = int(1e8)
         #print(temp.data[0], logg.data[0], pgs.data[0], gs.data[0])
-        if modelset == 'aces-pso318':
-            filename = 'aces-pso318_t'+ str(int(temp.data[0])) + '_g' + '{0:.2f}'.format(float(logg.data[0])) + '_pgs' + '{}'.format(pgs.data[0]) + '_Kzz' + '{}'.format(kzz) + '_gs' + '{0:.1f}'.format(gs.data[0]) + '_%s.txt'%bandname
+        if modelset.lower() == 'aces-pso318':
+            filename = 'aces-pso318_t'+ str(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg.data[0])) + '_pgs{}'.format(pgs.data[0]) + '_kzz{0:.2f}'.format(kzz) + '_gs{0:.1f}'.format(gs.data[0]) + '_%s.txt'%bandname
+            #print('File', filename)        if modelset.lower() == 'aces-pso318':
+        elif modelset.lower() == 'vhs1256-pso':
+            metal = 0
+            alpha = 0
+            filename = 'VHS1256_PSO_t'+ str(int(temp.data[0])) + '_g{0:.2f}'.format(float(logg.data[0])) + '_z{0:.2f}'.format(metal) + '_alpha{0:.2f}'.format(alpha) + '_pgs{0:.2f}'.format(pgs.data[0]) + '_gs{0:.2f}'.format(gs.data[0]) + '_kzz{0:.2f}'.format(kzz) + '_%s.txt'%bandname
             #print('File', filename)
         else:
-            raise ValueError('Only aces-pso318 modelset available for 4D interpolation')
+            raise ValueError('Only [aces-pso318, vhs1256-pso] modelsets available for 4D interpolation')
         Tab = Table.read(path+filename, format='ascii.tab', names=['wave', 'flux'])
 
         if wave:
@@ -124,10 +94,14 @@ def InterpModel_4D(Teff, Logg, PGS, GS, modelset='aces-pso318', instrument='OSIR
         dist    = (LoggArr - logg)**2
         return LoggArr[np.argsort(dist)][0:2]
 
-    if modelset == 'aces-pso318':
+    if modelset.lower() == 'aces-pso318':
         Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams.csv'
-    T0 = Table.read(Gridfile)
-    T1 = T0[np.where(T0['Kzz'] == 1e8)] # not using Kzz yet!
+        T0 = Table.read(Gridfile)
+        T1 = T0[np.where(T0['Kzz'] == 1e8)] # not using Kzz yet!
+    elif modelset.lower() == 'vhs1256-pso':
+        Gridfile = BASE + '/../libraries/VHS1256_PSO/VHS1256_PSO_gridparams.csv'
+        T0 = Table.read(Gridfile, comment='#')
+        T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['pgs'] != 200000) & (T0['pgs'] != 300000) )] # not using Kzz yet!
 
     # Check if the model already exists (grid point)
     if (Teff, Logg, PGS, GS) in zip(T1['Temp'], T1['Logg'], T1['pgs'], T1['gs']): 
@@ -150,6 +124,7 @@ def InterpModel_4D(Teff, Logg, PGS, GS, modelset='aces-pso318', instrument='OSIR
     y0 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] <= Logg) )][-1]
     y1 = T1['Logg'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & (T1['Logg'] >= Logg) )][0]
     print(y0, Logg, y1)
+    #print(PGS, GS)
     z0 = T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] <= PGS) )][-1]
     #print(z0, PGS, z0 <= PGS, z0 >= PGS)
     z1 = sorted(T1['pgs'][np.where( ( (T1['Temp'] == x0) | (T1['Temp'] == x1) ) & ( (T1['Logg'] == y0) | (T1['Logg'] == y1) ) & (T1['pgs'] >= PGS) )])[0]
@@ -230,6 +205,9 @@ def InterpModel_4D(Teff, Logg, PGS, GS, modelset='aces-pso318', instrument='OSIR
               ]
     #print(Points)
     waves2 = GetModel(T1['Temp'][ind1111], T1['Logg'][ind1111], T1['pgs'][ind1111], T1['gs'][ind1111], wave=True, modelset=modelset)
+    #print('returning')
+    #print(waves2)
+    #print(ospf.utils.interpolations.quadlinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), GS, Points))
 
-    return waves2, quadlinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), GS, Points)
+    return waves2, ospf.utils.interpolations.quadlinear_interpolation(np.log10(Teff), Logg, np.log10(PGS), GS, Points)
 
