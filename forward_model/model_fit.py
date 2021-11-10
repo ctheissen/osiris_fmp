@@ -107,9 +107,34 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 		# contunuum correction (not for OSIRIS data)
 		#model = nsp.continuum(data=data, mdl=model)
 		if smooth:
-			smoothfluxmed = sp.ndimage.filters.uniform_filter(model.flux, size=200) #replica of IDL
+			# # ---saavi commented 
+			# smoothfluxmed = sp.ndimage.filters.uniform_filter(model.flux, size=200) #replica of IDL
+			# model.flux -= smoothfluxmed
+			# # -------
 
-			model.flux -= smoothfluxmed
+			import scipy.signal as signal 
+			def butter_highpass(cutoff, fs, btype, order=5):
+			    nyq = 0.5 * fs
+			    normal_cutoff = cutoff / nyq
+			    b, a = signal.butter(order, normal_cutoff, btype=btype, analog=False)
+			    return b, a
+
+			def butter_highpass_filter(data, cutoff, fs, btype, order=5):
+			    b, a = butter_highpass(cutoff, fs, btype, order=order)
+			    y = signal.filtfilt(b, a, data)
+			    return y
+
+
+			cutoff = 10e-3
+			fs = 2
+			# saavif, saavipsd = signal.welch(model.flux, fs, nperseg=2**12)
+			# plt.loglog(saavif, saavipsd)
+
+			model.flux = butter_highpass_filter(model.flux, cutoff, fs, 'high', order=5)	
+			# saavif, saavipsd = signal.welch(model.flux, fs, nperseg=2**12)
+			# plt.loglog(saavif, saavipsd)
+			# plt.plot(model.flux)
+			# plt.show()
 		
 		# flux multiplicate
 		model.flux *= flux_multiplier
