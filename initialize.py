@@ -27,6 +27,6 @@ def getModelgrid(modelset = 'phoenix-aces-agss-cond-2011'):
     BASE, NAME = os.path.split(FULL_PATH)
     Gridfile = BASE + '/libraries/%s/%s_gridparams.csv'%(osiris_fmp.ModelSets[modelset.lower()], osiris_fmp.ModelSets[modelset.lower()])
     # Read the grid file
-    T1 = Table.read(Gridfile)
+    T1 = Table.read(Gridfile, comment='#')
 
     return(T1)
