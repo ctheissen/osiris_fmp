@@ -33,6 +33,7 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	modelset   = kwargs.get('modelset', 'aces2013')
 	lsf        = kwargs.get('lsf', None)   # instrumental LSF
 	pgs        = kwargs.get('pgs', None)  # pgs
+	gs         = kwargs.get('gs', None)  # gs
 	vsini_set  = kwargs.get('vsini_set', True) # apply telluric
 	tell       = kwargs.get('tell', True) # apply telluric
 	data       = kwargs.get('data', None) # for continuum correction and resampling
@@ -46,7 +47,7 @@ def makeModel(teff, logg, z, vsini, rv, alpha, wave_offset, flux_offset, flux_mu
 	if data is not None:
 		order = data.order
 	# read in a model
-	model    = nsp.Model(teff=teff, logg=logg, z=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
+	model    = nsp.Model(teff=teff, logg=logg, z=z, pgs=pgs, gs=gs, modelset=modelset, instrument=instrument, band=band)
 	#model    = nsp.Model(teff=teff, logg=logg, feh=z, pgs=pgs, modelset=modelset, instrument=instrument, band=band)
 	#print('TEST1', model.flux)
 	
