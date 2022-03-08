@@ -104,6 +104,7 @@ class Model():
             #self.flux = sp.flux.value
 
             #print('TEST1', self.instrument, self.band, self.modelset, self.wave)
+            #print(self.pgs, self.gs)
             
             if self.modelset.lower() == 'phoenix-aces-agss-cond-2011':
                 wave, flux = ospf.forward_model.InterpolateModel.InterpModel(self.teff, self.logg, self.z, modelset=self.modelset, 

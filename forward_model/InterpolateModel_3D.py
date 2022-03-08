@@ -252,9 +252,7 @@ def InterpModel_3D(Teff, Logg, PGS, modelset='aces-pso318', instrument='OSIRIS',
 
 
     elif modelset.lower() == 'vhs1256-pso':
-        #Gridfile = BASE + '/../libraries/aces-pso318/aces-pso318_gridparams_uniform.csv'
-        #Gridfile = BASE + '/../libraries/ACES-PSO318/ACES-PSO318_gridparams.csv'
-        Gridfile = BASE + '/../libraries/VHS1256_PSO/VHS1256_PSO_gridparams.csv'
+        Gridfile = BASE + '/../libraries/VHS1256_PSO/VHS1256_PSO_gridparams_3D.csv'
         T0 = Table.read(Gridfile, comment='#')
         T1 = T0[np.where( (T0['Kzz'] == 1e8) & (T0['GS'] == 1) ) ] # not using Kzz yet!
 
